@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "135766271294",
+    "project_id": "ukk-cafe-3da28",
+    "storage_bucket": "ukk-cafe-3da28.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:135766271294:android:6cb57ea6b9eb1cb692f86f",
+        "android_client_info": {
+          "package_name": "com.example.ukk_cafe"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAuePupUH6FvKCBUzpXqfkiBq8shf4y340"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
