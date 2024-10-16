@@ -24,7 +24,7 @@ class _MenuCardState extends State<MenuCard> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
+      padding: EdgeInsets.all(8.0),
       child: ClipRRect(
         borderRadius: BorderRadius.all(
           Radius.circular(16),
@@ -40,10 +40,13 @@ class _MenuCardState extends State<MenuCard> {
               )
             ],
           ),
+          // Beri batasan ukuran pada Container
+          width: MediaQuery.of(context).size.width * 0.5, // Sesuaikan ukuran
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Expanded(
+              SizedBox(
+                height: MediaQuery.of(context).size.height * 0.19,
                 child: Padding(
                   padding: EdgeInsets.all(12.0),
                   child: ClipRRect(
@@ -51,7 +54,6 @@ class _MenuCardState extends State<MenuCard> {
                     child: Image.network(
                       widget.img,
                       fit: BoxFit.cover,
-                      height: MediaQuery.of(context).size.height * 0.23,
                       width: double.infinity,
                       loadingBuilder: (
                         BuildContext context,
@@ -59,10 +61,8 @@ class _MenuCardState extends State<MenuCard> {
                         ImageChunkEvent? loadingProgress,
                       ) {
                         if (loadingProgress == null) {
-                          // Gambar sudah selesai dimuat
                           return child;
                         } else {
-                          // Tampilkan CircularProgressIndicator saat gambar belum selesai dimuat
                           return Center(
                             child: CircularProgressIndicator.adaptive(
                               value: loadingProgress.expectedTotalBytes != null
@@ -73,12 +73,16 @@ class _MenuCardState extends State<MenuCard> {
                           );
                         }
                       },
-                      errorBuilder: (context, error, stackTrace) {
+                      errorBuilder: (
+                        context,
+                        error,
+                        stackTrace,
+                      ) {
                         return Center(
                           child: Icon(
                             Icons.error,
                             color: Colors.red,
-                          ), // Jika gagal memuat gambar
+                          ),
                         );
                       },
                     ),
@@ -97,30 +101,42 @@ class _MenuCardState extends State<MenuCard> {
                     Text(
                       widget.name,
                       style: TextStyle(
-                        fontSize: 20,
+                        fontSize: MediaQuery.of(context).size.width * 0.045,
                         color: Colors.black,
                         fontWeight: FontWeight.bold,
                         height: 1.1,
                       ),
                     ),
-                    SizedBox(height: 4), // Tambah jarak antara elemen
+                    SizedBox(height: 4),
                     Text(
                       widget.jenis,
                       style: TextStyle(
-                        fontSize: 12,
+                        fontSize: MediaQuery.of(context).size.width * 0.025,
                         color: Colors.grey,
                         fontWeight: FontWeight.bold,
                         height: 1.5,
                       ),
                     ),
-                    SizedBox(height: 8), // Tambah jarak antara elemen
-                    Text(
-                      widget.harga,
-                      style: TextStyle(
-                        fontSize: 18, // Sesuaikan ukuran font
-                        color: Colors.black,
-                        fontWeight: FontWeight.w600,
-                      ),
+                    SizedBox(height: 8),
+                    Row(
+                      children: [
+                        Text(
+                          "Rp",
+                          style: TextStyle(
+                            fontSize: MediaQuery.of(context).size.width * 0.04,
+                            color: Colors.black,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                        Text(
+                          widget.harga,
+                          style: TextStyle(
+                            fontSize: MediaQuery.of(context).size.width * 0.04,
+                            color: Colors.black,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ],
                     ),
                   ],
                 ),

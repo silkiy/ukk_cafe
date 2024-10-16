@@ -98,56 +98,6 @@ class AuthService {
     }
   }
 
-  Future<void> registerUser(
-    String email,
-    String password,
-    String retypePassword, {
-    required Function(bool) onLoading, // Callback untuk mengontrol loading
-    required Function(String) onError, // Callback untuk menangani error
-  }) async {
-    Timer? timer; // Timer untuk menangani timeout
-
-    if (password != retypePassword) {
-      onError('Password dan Konfirmasi Password tidak sesuai');
-      return;
-    }
-
-    try {
-      onLoading(true);
-
-      // Set timer untuk menangani timeout
-      timer = Timer(Duration(minutes: 1), () {
-        onLoading(false);
-        onError('Periksa koneksi anda/gunakan koneksi yang stabil');
-      });
-
-      UserCredential userCredential =
-          await _auth.createUserWithEmailAndPassword(
-        email: email,
-        password: password,
-      );
-
-      User? user = userCredential.user;
-
-      if (user != null) {
-        // Menambahkan pengguna ke Firestore
-        await _firestore.collection('users').doc(user.uid).set({
-          'uid': user.uid,
-          'email': email,
-          'role': "admin",
-        });
-        onError('Pengguna berhasil terdaftar');
-      }
-    } catch (e) {
-      onError('Error registering user: $e');
-    } finally {
-      if (timer != null) {
-        timer.cancel();
-      }
-      onLoading(false);
-    }
-  }
-
   Future<void> logout(BuildContext context) async {
     try {
       // Logout dari Firebase
@@ -162,4 +112,6 @@ class AuthService {
       );
     }
   }
+
+  
 }

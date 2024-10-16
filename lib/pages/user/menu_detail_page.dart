@@ -124,7 +124,9 @@ class _MenuDetailPageState extends State<MenuDetailPage> {
                                   Text(
                                     widget.menu.name,
                                     style: TextStyle(
-                                      fontSize: 40,
+                                      fontSize:
+                                          MediaQuery.of(context).size.width *
+                                              0.09,
                                       color: Colors.black,
                                       fontWeight: FontWeight.bold,
                                     ),
@@ -134,13 +136,16 @@ class _MenuDetailPageState extends State<MenuDetailPage> {
                                       Text(
                                         widget.menu.jenis,
                                         style: TextStyle(
-                                          fontSize: 20,
+                                          fontSize: MediaQuery.of(context)
+                                                  .size
+                                                  .width *
+                                              0.045,
                                           color: Colors.grey,
                                           fontWeight: FontWeight.w500,
                                         ),
                                       ),
                                       const SizedBox(
-                                        width: 20,
+                                        width: 10,
                                       ),
                                       RatingBar.builder(
                                         initialRating: 4,
@@ -161,16 +166,19 @@ class _MenuDetailPageState extends State<MenuDetailPage> {
                                     ],
                                   ),
                                   const SizedBox(
-                                    height: 20,
+                                    height: 10,
                                   ),
                                   Row(
                                     mainAxisAlignment:
                                         MainAxisAlignment.spaceBetween,
                                     children: [
                                       Text(
-                                        "\$${widget.menu.harga}",
+                                        "Rp${widget.menu.harga}",
                                         style: TextStyle(
-                                          fontSize: 26,
+                                          fontSize: MediaQuery.of(context)
+                                                  .size
+                                                  .width *
+                                              0.06,
                                           color: Colors.black,
                                           fontWeight: FontWeight.w600,
                                         ),
@@ -178,10 +186,10 @@ class _MenuDetailPageState extends State<MenuDetailPage> {
                                     ],
                                   ),
                                   const SizedBox(
-                                    height: 20,
-                                  ),
-                                  const SizedBox(
                                     height: 10,
+                                  ),
+                                  Divider(
+                                    color: Colors.grey[400],
                                   ),
                                   const SizedBox(
                                     height: 10,
@@ -191,7 +199,9 @@ class _MenuDetailPageState extends State<MenuDetailPage> {
                                     textAlign: TextAlign.justify,
                                     maxLines: 4,
                                     style: TextStyle(
-                                      fontSize: 14,
+                                      fontSize:
+                                          MediaQuery.of(context).size.width *
+                                              0.04,
                                       color: Colors.black,
                                       fontWeight: FontWeight.normal,
                                     ),
@@ -226,7 +236,11 @@ class _MenuDetailPageState extends State<MenuDetailPage> {
                                   ),
                                   Text(
                                     '$_quantity', // Tampilkan quantity
-                                    style: TextStyle(fontSize: 20),
+                                    style: TextStyle(
+                                      fontSize:
+                                          MediaQuery.of(context).size.width *
+                                              0.045,
+                                    ),
                                   ),
                                   IconButton(
                                     icon: Icon(Icons.add),
@@ -274,7 +288,7 @@ class _MenuDetailPageState extends State<MenuDetailPage> {
                                     boxShadow: [
                                       BoxShadow(
                                         color: Colors.grey,
-                                        offset: Offset(1, 1),
+                                        offset: Offset(0.2, 0.2),
                                         blurRadius: 2,
                                       )
                                     ],
