@@ -44,5 +44,13 @@ class MenuService {
     }
   }
 
-
+  Future<int> getMenuCount() async {
+    try {
+      QuerySnapshot snapshot = await _firestore.collection('menu_cafe').get();
+      return snapshot.size;
+    } catch (e) {
+      print('Error fetching player count: $e');
+      throw Exception('Error fetching player count.');
+    }
+  }
 }

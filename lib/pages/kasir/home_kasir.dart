@@ -35,7 +35,12 @@ class _HomeKasirPageState extends State<HomeKasirPage> {
       appBar: AppBar(
         backgroundColor: Colors.white,
         title: Text(
-          'Daftar Transaksi',
+          'Data Transaksi - Kasir',
+          style: GoogleFonts.poppins(
+            fontSize: MediaQuery.of(context).size.width * 0.035,
+            fontWeight: FontWeight.w600,
+            color: Colors.black,
+          ),
         ),
         actions: [
           IconButton(

@@ -37,7 +37,7 @@ class _MenuCardState extends State<MenuCard> {
                 color: Colors.grey,
                 offset: Offset(1, 1),
                 blurRadius: 2,
-              )
+              ),
             ],
           ),
           // Beri batasan ukuran pada Container

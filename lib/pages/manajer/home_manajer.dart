@@ -1,5 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
+
+import '../../services/auth_service.dart';
 
 class HomeManajerPage extends StatefulWidget {
   const HomeManajerPage({super.key});
@@ -49,11 +52,35 @@ class _HomeManajerPageState extends State<HomeManajerPage> {
     return query.snapshots();
   }
 
+  void _handleLogout() {
+    AuthService().logout(context);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Color.fromRGBO(243, 244, 248, 1),
       appBar: AppBar(
-        title: Text('Data Transaksi - Manajer'),
+        backgroundColor: Colors.white,
+        title: Text(
+          'Data Transaksi - Manajer',
+          style: GoogleFonts.poppins(
+            fontSize: MediaQuery.of(context).size.width * 0.035,
+            fontWeight: FontWeight.w600,
+            color: Colors.black,
+          ),
+        ),
+        actions: [
+          IconButton(
+            onPressed: () {
+              _handleLogout();
+            },
+            icon: Icon(
+              Icons.logout,
+              size: 30,
+            ),
+          ),
+        ],
       ),
       body: Column(
         children: [

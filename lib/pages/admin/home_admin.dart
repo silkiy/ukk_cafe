@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:ukk_cafe/services/menu_service.dart';
 
+import '../../components/admin/information_container.dart';
 import '../../services/auth_service.dart';
+import '../../services/user_service.dart';
 
 class HomeAdminPage extends StatefulWidget {
   const HomeAdminPage({super.key});
@@ -10,6 +14,19 @@ class HomeAdminPage extends StatefulWidget {
 }
 
 class _HomeAdminPageState extends State<HomeAdminPage> {
+  final UserService _userService = UserService();
+  final MenuService _menuService = MenuService();
+
+  Future<Map<String, int>> _getDashboardCounts() async {
+    final int totalUser = await _userService.getUserCount();
+    final int totalMenu = await _menuService.getMenuCount();
+
+    return {
+      'totalUser': totalUser,
+      'totalMenu': totalMenu,
+    };
+  }
+
   void _handleLogout() {
     AuthService().logout(context);
   }
@@ -17,11 +34,88 @@ class _HomeAdminPageState extends State<HomeAdminPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Center(
-        child: Column(
-          children: [
-            
-          ],
+      backgroundColor: Color.fromRGBO(243, 244, 248, 1),
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        title: Text(
+          'Admin',
+          style: GoogleFonts.poppins(
+            fontSize: MediaQuery.of(context).size.width * 0.035,
+            fontWeight: FontWeight.w600,
+            color: Colors.black,
+          ),
+        ),
+        actions: [
+          IconButton(
+            onPressed: () {
+              _handleLogout();
+            },
+            icon: Icon(
+              Icons.logout,
+              size: 30,
+            ),
+          ),
+        ],
+      ),
+      body: Expanded(
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: EdgeInsets.all(20),
+            child: FutureBuilder<Map<String, int>>(
+                future: _getDashboardCounts(),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return Center(
+                      child: CircularProgressIndicator(),
+                    ); // Loading state
+                  } else if (snapshot.hasError) {
+                    return Center(
+                      child: Text('Error: ${snapshot.error}'),
+                    ); // Error state
+                  } else if (!snapshot.hasData) {
+                    return Center(
+                      child: Text('Tidak ada data yang tersedia'),
+                    );
+                  }
+          
+                  final int totalUser = snapshot.data!['totalUser']!;
+                  final int totalMenu = snapshot.data!['totalMenu']!;
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      Text(
+                        "Total User dan menu",
+                        style: GoogleFonts.poppins(
+                          fontSize: MediaQuery.of(context).size.width * 0.04,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.black,
+                        ),
+                      ),
+                      SizedBox(height: 20),
+                      Row(
+                        children: [
+                          InformationContainer(
+                            route: '',
+                            icon: Icons.food_bank,
+                            jumlah: totalMenu.toString(),
+                            jenis: "menu",
+                          ),
+                          Expanded(
+                            child: Container(),
+                          ),
+                          InformationContainer(
+                            route: '',
+                            icon: Icons.person,
+                            jumlah: totalUser.toString(),
+                            jenis: "Total user",
+                          ),
+                        ],
+                      ),
+                    ],
+                  );
+                }),
+          ),
         ),
       ),
     );
