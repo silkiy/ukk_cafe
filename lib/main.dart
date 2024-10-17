@@ -1,10 +1,11 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:ukk_cafe/components/admin/detail_menu_admin.dart';
+import 'package:ukk_cafe/pages/admin/detail_menu_admin.dart';
 
 import 'package:ukk_cafe/pages/admin/home_admin.dart';
 import 'package:ukk_cafe/pages/admin/page_data_menu_admin.dart';
+import 'package:ukk_cafe/pages/admin/page_tambah_menu_admin.dart';
 import 'package:ukk_cafe/pages/kasir/home_kasir.dart';
 import 'package:ukk_cafe/pages/manajer/home_manajer.dart';
 import 'package:ukk_cafe/pages/user/detail_transaksi_page.dart';
@@ -55,6 +56,7 @@ class MyApp extends StatelessWidget {
         '/home_manajer': (context) => HomeManajerPage(),
         '/page_data_menu_admin': (context) => PageDataMenuAdmin(),
         '/detail_menu_admin': (context) => DetailMenuAdmin(),
+        '/tambah_menu_admin': (context) => PageTambahMenuAdmin(),
       },
       // home: ,
     );

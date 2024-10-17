@@ -134,7 +134,7 @@ class _HomeAdminPageState extends State<HomeAdminPage> {
                           child: Container(),
                         ),
                         AddContainerAdmin(
-                          route: '/tambah_pelatih',
+                          route: '/tambah_menu_admin',
                           jenis: "Tambah Menu",
                           icon: Icons.add,
                         ),
