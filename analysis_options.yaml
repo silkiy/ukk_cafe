@@ -18,12 +18,13 @@ analyzer:
     prefer_const_constructors: ignore
     prefer_const_constructors_in_immutables: ignore
     prefer_const_literals_to_create_immutables: ignore
-    prefer_final_fields: ignore
+    prefer_final_fields: ignore ignore ignore ignore ignore
     sized_box_for_whitespace: ignore
     unnecessary_brace_in_string_interps: ignore
     unnecessary_null_comparison: ignore
     unnecessary_string_interpolations: ignore
     unused_element: ignore
+    unused_field: ignore
     unused_import: ignore
     unused_local_variable: ignore
     use_build_context_synchronously: ignore
