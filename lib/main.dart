@@ -50,13 +50,13 @@ class MyApp extends StatelessWidget {
         '/login_page': (context) => LoginPage(),
         //admin
         '/home_admin': (context) => HomeAdminPage(),
+        '/page_data_menu_admin': (context) => PageDataMenuAdmin(),
+        '/detail_menu_admin': (context) => DetailMenuAdmin(),
+        '/tambah_menu_admin': (context) => PageTambahMenuAdmin(),
         //kasir
         '/home_kasir': (context) => HomeKasirPage(),
         //manajer
         '/home_manajer': (context) => HomeManajerPage(),
-        '/page_data_menu_admin': (context) => PageDataMenuAdmin(),
-        '/detail_menu_admin': (context) => DetailMenuAdmin(),
-        '/tambah_menu_admin': (context) => PageTambahMenuAdmin(),
       },
     );
   }
