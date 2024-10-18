@@ -1,10 +1,13 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:ukk_cafe/components/admin/title_tambah_data.dart';
+import 'package:ukk_cafe/components/general_component/dropdown_jenis_menu.dart';
 
 import '../general_component/input_text_form_field.dart';
 
 class FormTambahMenuAdmin extends StatefulWidget {
+  final Function(String) onIdMenuChanged;
   final Function(String) onNamaMenuChanged;
   final Function(String) onjenisMenuChanged;
   final Function(String) onHargaMenuChanged;
@@ -12,6 +15,7 @@ class FormTambahMenuAdmin extends StatefulWidget {
 
   FormTambahMenuAdmin({
     super.key,
+    required this.onIdMenuChanged,
     required this.onHargaMenuChanged,
     required this.onNamaMenuChanged,
     required this.onDeskripsiMenuChanged,
@@ -24,16 +28,16 @@ class FormTambahMenuAdmin extends StatefulWidget {
 
 class _FormTambahMenuAdminState extends State<FormTambahMenuAdmin> {
   final TextEditingController namaMenuController = TextEditingController();
+  final TextEditingController idMenuController = TextEditingController();
   final TextEditingController hargaMenuController = TextEditingController();
-  final TextEditingController jenisMenuController = TextEditingController();
   final TextEditingController deskripsiMenuController = TextEditingController();
+  String _jenisMenus = 'Pilih jenis menu';
 
   @override
   void initState() {
     super.initState();
     namaMenuController.addListener(_handleNamaMenuChanged);
 
-    jenisMenuController.addListener(_handleJenisMenuChanged);
     hargaMenuController.addListener(_handleHargaMenuChanged);
     deskripsiMenuController.addListener(_handleDeskripsiMenuChanged);
   }
@@ -41,18 +45,25 @@ class _FormTambahMenuAdminState extends State<FormTambahMenuAdmin> {
   @override
   void dispose() {
     namaMenuController.dispose();
-    jenisMenuController.dispose();
     hargaMenuController.dispose();
+    _jenisMenus.toString();
     deskripsiMenuController.dispose();
     super.dispose();
+  }
+
+  void _handleIdMenuChanged() {
+    widget.onIdMenuChanged(idMenuController.text);
   }
 
   void _handleNamaMenuChanged() {
     widget.onNamaMenuChanged(namaMenuController.text);
   }
 
-  void _handleJenisMenuChanged() {
-    widget.onjenisMenuChanged(jenisMenuController.text);
+  void _handleJenisMenuChanged(String? jenisMenu) {
+    setState(() {
+      _jenisMenus = jenisMenu!;
+      widget.onjenisMenuChanged(_jenisMenus);
+    });
   }
 
   void _handleHargaMenuChanged() {
@@ -83,9 +94,17 @@ class _FormTambahMenuAdminState extends State<FormTambahMenuAdmin> {
               controller: namaMenuController,
             ),
             InputFormField(
-              leading: "Jenis",
-              hintText: "jenis Menu",
-              controller: jenisMenuController,
+              leading: "ID",
+              hintText: "Id Menu",
+              controller: idMenuController,
+            ),
+            DropdownJenisMenu(
+              onJenisMenuSelected: (jenisMenu) {
+                _jenisMenus = jenisMenu;
+              },
+            ),
+            SizedBox(
+              height: MediaQuery.of(context).size.height * 0.03,
             ),
             InputFormField(
               leading: "Harga",
@@ -96,7 +115,7 @@ class _FormTambahMenuAdminState extends State<FormTambahMenuAdmin> {
               leading: "Deskripsi",
               hintText: "Deskripsi Menu",
               controller: deskripsiMenuController,
-            )
+            ),
           ],
         ),
       ),
