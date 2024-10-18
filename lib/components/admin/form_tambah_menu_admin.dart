@@ -7,7 +7,6 @@ import 'package:ukk_cafe/components/general_component/dropdown_jenis_menu.dart';
 import '../general_component/input_text_form_field.dart';
 
 class FormTambahMenuAdmin extends StatefulWidget {
-  final Function(String) onIdMenuChanged;
   final Function(String) onNamaMenuChanged;
   final Function(String) onjenisMenuChanged;
   final Function(String) onHargaMenuChanged;
@@ -15,7 +14,6 @@ class FormTambahMenuAdmin extends StatefulWidget {
 
   FormTambahMenuAdmin({
     super.key,
-    required this.onIdMenuChanged,
     required this.onHargaMenuChanged,
     required this.onNamaMenuChanged,
     required this.onDeskripsiMenuChanged,
@@ -28,16 +26,13 @@ class FormTambahMenuAdmin extends StatefulWidget {
 
 class _FormTambahMenuAdminState extends State<FormTambahMenuAdmin> {
   final TextEditingController namaMenuController = TextEditingController();
-  final TextEditingController idMenuController = TextEditingController();
   final TextEditingController hargaMenuController = TextEditingController();
   final TextEditingController deskripsiMenuController = TextEditingController();
-  String _jenisMenus = 'Pilih jenis menu';
 
   @override
   void initState() {
     super.initState();
     namaMenuController.addListener(_handleNamaMenuChanged);
-
     hargaMenuController.addListener(_handleHargaMenuChanged);
     deskripsiMenuController.addListener(_handleDeskripsiMenuChanged);
   }
@@ -46,24 +41,16 @@ class _FormTambahMenuAdminState extends State<FormTambahMenuAdmin> {
   void dispose() {
     namaMenuController.dispose();
     hargaMenuController.dispose();
-    _jenisMenus.toString();
     deskripsiMenuController.dispose();
     super.dispose();
-  }
-
-  void _handleIdMenuChanged() {
-    widget.onIdMenuChanged(idMenuController.text);
   }
 
   void _handleNamaMenuChanged() {
     widget.onNamaMenuChanged(namaMenuController.text);
   }
 
-  void _handleJenisMenuChanged(String? jenisMenu) {
-    setState(() {
-      _jenisMenus = jenisMenu!;
-      widget.onjenisMenuChanged(_jenisMenus);
-    });
+  void _handleJenisMenuChanged(String jenisMenu) {
+    widget.onjenisMenuChanged(jenisMenu);
   }
 
   void _handleHargaMenuChanged() {
@@ -78,46 +65,33 @@ class _FormTambahMenuAdminState extends State<FormTambahMenuAdmin> {
   Widget build(BuildContext context) {
     return Padding(
       padding: EdgeInsets.all(20),
-      child: Container(
-        child: Column(
-          children: [
-            TitleTambahData(
-              title: "Menu",
-              icon: Icons.food_bank_outlined,
-            ),
-            SizedBox(
-              height: MediaQuery.of(context).size.height * 0.04,
-            ),
-            InputFormField(
-              leading: 'Nama',
-              hintText: 'Nama Menu',
-              controller: namaMenuController,
-            ),
-            InputFormField(
-              leading: "ID",
-              hintText: "Id Menu",
-              controller: idMenuController,
-            ),
-            DropdownJenisMenu(
-              onJenisMenuSelected: (jenisMenu) {
-                _jenisMenus = jenisMenu;
-              },
-            ),
-            SizedBox(
-              height: MediaQuery.of(context).size.height * 0.03,
-            ),
-            InputFormField(
-              leading: "Harga",
-              hintText: "Harga Menu",
-              controller: hargaMenuController,
-            ),
-            InputFormField(
-              leading: "Deskripsi",
-              hintText: "Deskripsi Menu",
-              controller: deskripsiMenuController,
-            ),
-          ],
-        ),
+      child: Column(
+        children: [
+          TitleTambahData(
+            title: "Menu",
+            icon: Icons.food_bank_outlined,
+          ),
+          SizedBox(height: MediaQuery.of(context).size.height * 0.04),
+          InputFormField(
+            leading: 'Nama',
+            hintText: 'Nama Menu',
+            controller: namaMenuController,
+          ),
+          DropdownJenisMenu(
+            onJenisMenuSelected: _handleJenisMenuChanged, // Memanggil handler
+          ),
+          SizedBox(height: MediaQuery.of(context).size.height * 0.03),
+          InputFormField(
+            leading: "Harga",
+            hintText: "Harga Menu",
+            controller: hargaMenuController,
+          ),
+          InputFormField(
+            leading: "Deskripsi",
+            hintText: "Deskripsi Menu",
+            controller: deskripsiMenuController,
+          ),
+        ],
       ),
     );
   }
