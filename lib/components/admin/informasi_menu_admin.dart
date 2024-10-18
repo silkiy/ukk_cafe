@@ -70,7 +70,7 @@ class InformasiMenuAdmin extends StatelessWidget {
                 );
               },
               child: Padding(
-                padding: EdgeInsets.all(7),
+                padding: EdgeInsets.all(5),
                 child: Container(
                   decoration: BoxDecoration(
                     border: Border.all(
