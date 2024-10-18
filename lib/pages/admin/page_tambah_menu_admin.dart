@@ -1,10 +1,13 @@
 import 'dart:io';
 
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:ukk_cafe/components/admin/form_tambah_menu_admin.dart';
+
+import '../../services/menu_service.dart';
 
 class PageTambahMenuAdmin extends StatefulWidget {
   PageTambahMenuAdmin({super.key});
@@ -15,6 +18,7 @@ class PageTambahMenuAdmin extends StatefulWidget {
 
 class _PageTambahMenuAdminState extends State<PageTambahMenuAdmin> {
   final _formKey = GlobalKey<FormState>();
+  final MenuService _menuService = MenuService();
   bool _isImagePicked = false;
 
   File? _image;
@@ -24,9 +28,101 @@ class _PageTambahMenuAdminState extends State<PageTambahMenuAdmin> {
   final ImagePicker _picker = ImagePicker();
 
   String? _namaMenu;
+  late String _idMenu;
   String? _jenisMenu;
   String? _hargaMenu;
   String? _deskripsiMenu;
+
+  Future<String> _uploadMenuImage(XFile? image) async {
+    if (image == null) {
+      return '';
+    }
+
+    // Nama file unik
+    String fileName = 'menu_${DateTime.now().millisecondsSinceEpoch}.jpg';
+    Reference ref =
+        FirebaseStorage.instance.ref().child('menu').child(fileName);
+
+    // Mengunggah gambar
+    UploadTask uploadTask = ref.putData(
+      await image.readAsBytes(),
+    );
+
+    TaskSnapshot snapshot = await uploadTask;
+    if (snapshot.state == TaskState.success) {
+      String downloadUrl = await snapshot.ref.getDownloadURL();
+      return downloadUrl;
+    } else {
+      throw Exception('Failed to upload image');
+    }
+  }
+
+  Future<void> _pickAndUploadImage() async {
+    final XFile? selectedImage =
+        await _picker.pickImage(source: ImageSource.gallery);
+
+    if (selectedImage != null) {
+      setState(() {
+        _image = File(selectedImage.path);
+        _isImagePicked = true;
+      });
+    } else {
+      print('No image selected');
+    }
+  }
+
+  Future<void> _uploadImage() async {
+    if (_image != null) {
+      try {
+        String uploadUrl = await _uploadMenuImage(
+          XFile(_image!.path),
+        );
+        setState(() {
+          _imageUrl = uploadUrl; // Simpan URL gambar yang diupload
+        });
+        print("Image uploaded successfully: $_imageUrl");
+      } catch (e) {
+        print("Failed to upload image: $e");
+      }
+    }
+  }
+
+  Future<void> _submitMenu() async {
+    if (_formKey.currentState!.validate()) {
+      _formKey.currentState!.save();
+
+      // Pastikan idMenu tidak null
+      if (_idMenu == null || _idMenu.isEmpty) {
+        _idMenu =
+            'menu_${DateTime.now().millisecondsSinceEpoch}'; // Generate unique id
+      }
+
+      try {
+        // Call the addMenu function
+        await _menuService.addMenu(
+          idMenu: _idMenu,
+          imageUrl: _imageUrl,
+          namaMenu: _namaMenu!,
+          jenisMenu: _jenisMenu!,
+          hargaMenu: _hargaMenu!,
+          deskripsiMenu: _deskripsiMenu!,
+        );
+
+        // Show success message
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text('Menu added successfully!'),
+        ));
+
+        // Reset the form after successful submission
+        _formKey.currentState!.reset();
+      } catch (e) {
+        // Show error message
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text('Failed to add menu: $e'),
+        ));
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -100,8 +196,7 @@ class _PageTambahMenuAdminState extends State<PageTambahMenuAdmin> {
                                 ),
                                 backgroundColor: Color.fromRGBO(203, 24, 28, 1),
                               ),
-                              // onPressed: _isImagePicked ? _uploadImage : null,
-                              onPressed: () {},
+                              onPressed: _isImagePicked ? _uploadImage : null,
                               child: Text(
                                 "Unggah Foto",
                                 style: GoogleFonts.poppins(
@@ -123,8 +218,7 @@ class _PageTambahMenuAdminState extends State<PageTambahMenuAdmin> {
                                 ),
                                 backgroundColor: Color.fromRGBO(203, 24, 28, 1),
                               ),
-                              // onPressed: _pickAndUploadImage,
-                              onPressed: () {},
+                              onPressed: _pickAndUploadImage,
                               child: Text(
                                 "upload/ganti Foto",
                                 style: GoogleFonts.poppins(
@@ -154,6 +248,9 @@ class _PageTambahMenuAdminState extends State<PageTambahMenuAdmin> {
                 height: MediaQuery.of(context).size.height * 0.04,
               ),
               FormTambahMenuAdmin(
+                onIdMenuChanged: (idMenu) {
+                  _idMenu = idMenu;
+                },
                 onNamaMenuChanged: (namaMenu) {
                   _hargaMenu = namaMenu;
                 },
@@ -190,7 +287,7 @@ class _PageTambahMenuAdminState extends State<PageTambahMenuAdmin> {
                       ),
                       foregroundColor: WidgetStatePropertyAll(Colors.white),
                     ),
-                    onPressed: () {},
+                    onPressed: _submitMenu,
                     child: Row(
                       children: [
                         Icon(Icons.add),

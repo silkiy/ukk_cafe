@@ -4,6 +4,31 @@ import '../models/menu.dart';
 class MenuService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
+  Future<void> addMenu({
+    required String idMenu, // Menambahkan idMenu sebagai parameter
+    required String? imageUrl,
+    required String namaMenu,
+    required String jenisMenu,
+    required String hargaMenu,
+    required String deskripsiMenu,
+  }) async {
+    try {
+      // Menggunakan set() dengan idMenu sebagai nama dokumen
+      await _firestore.collection('menu_cafe').doc(idMenu).set({
+        'imageUrl': imageUrl,
+        'namaMenu': namaMenu,
+        'jenisMenu': jenisMenu,
+        'hargaMenu': hargaMenu,
+        'deskripsiMenu': deskripsiMenu,
+        'createdAt': Timestamp.now(),
+      });
+      print('Menu successfully added with ID: $idMenu');
+    } catch (e) {
+      print('Error adding menu: $e');
+      throw Exception('Failed to add menu.');
+    }
+  }
+
   Future<List<Menu>> getMenu() async {
     try {
       QuerySnapshot querySnapshot =
@@ -22,10 +47,6 @@ class MenuService {
       throw Exception("Error mengambil menu");
     }
   }
-
-
-  
-
 
   Future<List<Menu>> getMenuByJenis(String jenis) async {
     try {
