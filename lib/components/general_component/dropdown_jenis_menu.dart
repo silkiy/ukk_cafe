@@ -3,6 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 
 class DropdownJenisMenu extends StatefulWidget {
   final Function(String)? onJenisMenuSelected;
+
   const DropdownJenisMenu({
     super.key,
     this.onJenisMenuSelected,
@@ -39,18 +40,18 @@ class _DropdownJenisMenuState extends State<DropdownJenisMenu> {
           ),
           ExpansionTile(
             title: Text(
-              _jenisMenus, // This changes dynamically based on the selection
+              _jenisMenus,
               style: TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.w400,
-                color: _jenisMenus != "Pilih Jenis Menu"
+                color: _jenisMenus != "Pilih jenis menu"
                     ? Colors.black
                     : Color.fromRGBO(101, 101, 101, 1),
               ),
             ),
             children: [
               _buildersJenisMenuOption("minuman", context),
-              _buildersJenisMenuOption("makanan", context)
+              _buildersJenisMenuOption("makanan", context),
             ],
           ),
         ],
@@ -72,7 +73,7 @@ class _DropdownJenisMenuState extends State<DropdownJenisMenu> {
               _jenisMenus = jenisMenu;
             });
             if (widget.onJenisMenuSelected != null) {
-              widget.onJenisMenuSelected!(jenisMenu);
+              widget.onJenisMenuSelected!(jenisMenu); // Memanggil callback
             }
           },
           child: Text(
@@ -80,10 +81,8 @@ class _DropdownJenisMenuState extends State<DropdownJenisMenu> {
             style: TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.w600,
-              color: isSelected
-                  ? Colors.black // Color for selected option
-                  : Color.fromRGBO(
-                      154, 154, 154, 1), // Color for unselected options
+              color:
+                  isSelected ? Colors.black : Color.fromRGBO(154, 154, 154, 1),
             ),
           ),
         ),
@@ -91,8 +90,8 @@ class _DropdownJenisMenuState extends State<DropdownJenisMenu> {
             ? Icon(
                 Icons.check,
                 color: Colors.black,
-              ) // Show a check mark if selected
-            : null, // No icon if unselected
+              )
+            : null,
       ),
     );
   }
