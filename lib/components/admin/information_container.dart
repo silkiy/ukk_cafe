@@ -39,7 +39,7 @@ class InformationContainer extends StatelessWidget {
           ],
         ),
         width: MediaQuery.of(context).size.width * 0.4,
-        height: MediaQuery.of(context).size.height * 0.17,
+        height: MediaQuery.of(context).size.height * 0.2,
         child: Padding(
           padding: EdgeInsets.all(20),
           child: Column(
