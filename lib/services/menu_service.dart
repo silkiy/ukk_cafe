@@ -5,24 +5,24 @@ class MenuService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   Future<void> addMenu({
-    required String idMenu, // Menambahkan idMenu sebagai parameter
+    required String id, // Menambahkan idMenu sebagai parameter
     required String? imageUrl,
-    required String namaMenu,
-    required String jenisMenu,
+    required String nama,
+    required String jenis,
     required String hargaMenu,
-    required String deskripsiMenu,
+    required String deskripsi,
   }) async {
     try {
+      num harga = num.parse(hargaMenu); // Parsing hargaMenu ke num
       // Menggunakan set() dengan idMenu sebagai nama dokumen
-      await _firestore.collection('menu_cafe').doc(idMenu).set({
-        'imageUrl': imageUrl,
-        'namaMenu': namaMenu,
-        'jenisMenu': jenisMenu,
-        'hargaMenu': hargaMenu,
-        'deskripsiMenu': deskripsiMenu,
-        'createdAt': Timestamp.now(),
+      await _firestore.collection('menu_cafe').doc(id).set({
+        'img': imageUrl,
+        'name': nama,
+        'jenis': jenis,
+        'harga': harga,
+        'deskripsi': deskripsi,
       });
-      print('Menu successfully added with ID: $idMenu');
+      print('Menu successfully added with ID: $id');
     } catch (e) {
       print('Error adding menu: $e');
       throw Exception('Failed to add menu.');
