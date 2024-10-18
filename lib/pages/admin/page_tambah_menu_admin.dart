@@ -28,7 +28,7 @@ class _PageTambahMenuAdminState extends State<PageTambahMenuAdmin> {
   final ImagePicker _picker = ImagePicker();
 
   String? _namaMenu;
-  late String _idMenu;
+  final String _idMenu = 'menu_${DateTime.now().millisecondsSinceEpoch}';
   String? _jenisMenu;
   String? _hargaMenu;
   String? _deskripsiMenu;
@@ -81,47 +81,118 @@ class _PageTambahMenuAdminState extends State<PageTambahMenuAdmin> {
           _imageUrl = uploadUrl; // Simpan URL gambar yang diupload
         });
         print("Image uploaded successfully: $_imageUrl");
+
+        // Show success dialog
+        _showSuccessDialog('Image uploaded successfully');
       } catch (e) {
         print("Failed to upload image: $e");
+        // Optionally show an error dialog
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text("Failed to upload image: $e"),
+          ),
+        );
       }
     }
   }
 
   Future<void> _submitMenu() async {
+    // Log nilai variabel sebelum validasi
+    print('Logging form input values:');
+    print('Nama Menu: $_namaMenu');
+    print('Jenis Menu: $_jenisMenu');
+    print('Harga Menu: $_hargaMenu');
+    print('Deskripsi Menu: $_deskripsiMenu');
+    print('Image URL: $_imageUrl');
+    print('ID Menu: $_idMenu');
+
+    // Cek apakah ada nilai yang null
+    if (_namaMenu == null || _namaMenu!.isEmpty) {
+      print('Error: Nama Menu is null or empty');
+    }
+    if (_jenisMenu == null || _jenisMenu!.isEmpty) {
+      print('Error: Jenis Menu is null or empty');
+    }
+    if (_hargaMenu == null || _hargaMenu!.isEmpty) {
+      print('Error: Harga Menu is null or empty');
+    }
+    if (_deskripsiMenu == null || _deskripsiMenu!.isEmpty) {
+      print('Error: Deskripsi Menu is null or empty');
+    }
+    if (_imageUrl == null || _imageUrl!.isEmpty) {
+      print('Error: Image URL is null or empty');
+    }
+
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
 
-      // Pastikan idMenu tidak null
-      if (_idMenu == null || _idMenu.isEmpty) {
-        _idMenu =
-            'menu_${DateTime.now().millisecondsSinceEpoch}'; // Generate unique id
-      }
-
       try {
+        // Log ketika proses penambahan menu dimulai
+        print('Adding menu to Firebase...');
+
         // Call the addMenu function
         await _menuService.addMenu(
-          idMenu: _idMenu,
-          imageUrl: _imageUrl,
-          namaMenu: _namaMenu!,
-          jenisMenu: _jenisMenu!,
+          id: _idMenu,
+          imageUrl: _imageUrl!,
+          nama: _namaMenu!,
+          jenis: _jenisMenu!,
           hargaMenu: _hargaMenu!,
-          deskripsiMenu: _deskripsiMenu!,
+          deskripsi: _deskripsiMenu!,
         );
 
-        // Show success message
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          content: Text('Menu added successfully!'),
-        ));
+        // Log keberhasilan
+        print('Menu added successfully!');
+
+        _formKey.currentState!.reset();
+
+        // Show success dialog
+        _showSuccessDialog(
+          'Menu added successfully!',
+          navigateToHome: true,
+        );
 
         // Reset the form after successful submission
-        _formKey.currentState!.reset();
       } catch (e) {
+        // Log error jika ada masalah saat menambahkan menu
+        print('Failed to add menu: $e');
+
         // Show error message
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          content: Text('Failed to add menu: $e'),
-        ));
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Failed to add menu: $e'),
+          ),
+        );
       }
+    } else {
+      // Log jika form tidak valid
+      print('Form is not valid!');
     }
+  }
+
+  // Method to show success AlertDialog
+  // Method to show success AlertDialog
+  void _showSuccessDialog(String message, {bool navigateToHome = false}) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Success'),
+          content: Text(message),
+          actions: <Widget>[
+            TextButton(
+              child: Text('OK'),
+              onPressed: () {
+                Navigator.of(context).pop(); // Close the dialog
+                if (navigateToHome) {
+                  // Only navigate to the home page if specified
+                  Navigator.of(context).pushReplacementNamed('/home_admin');
+                }
+              },
+            ),
+          ],
+        );
+      },
+    );
   }
 
   @override
@@ -248,11 +319,8 @@ class _PageTambahMenuAdminState extends State<PageTambahMenuAdmin> {
                 height: MediaQuery.of(context).size.height * 0.04,
               ),
               FormTambahMenuAdmin(
-                onIdMenuChanged: (idMenu) {
-                  _idMenu = idMenu;
-                },
                 onNamaMenuChanged: (namaMenu) {
-                  _hargaMenu = namaMenu;
+                  _namaMenu = namaMenu;
                 },
                 onjenisMenuChanged: (jenisMenu) {
                   _jenisMenu = jenisMenu;
