@@ -58,7 +58,6 @@ class MyApp extends StatelessWidget {
         '/detail_menu_admin': (context) => DetailMenuAdmin(),
         '/tambah_menu_admin': (context) => PageTambahMenuAdmin(),
       },
-      // home: ,
     );
   }
 }
