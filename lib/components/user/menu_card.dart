@@ -74,9 +74,9 @@ class _MenuCardState extends State<MenuCard> {
                         }
                       },
                       errorBuilder: (
-                        context,
-                        error,
-                        stackTrace,
+                        BuildContext context,
+                        Object error,
+                        StackTrace? stackTrace,
                       ) {
                         return Center(
                           child: Icon(
