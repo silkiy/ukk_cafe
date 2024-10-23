@@ -169,8 +169,6 @@ class _PageTambahMenuAdminState extends State<PageTambahMenuAdmin> {
     }
   }
 
-  // Method to show success AlertDialog
-  // Method to show success AlertDialog
   void _showSuccessDialog(String message, {bool navigateToHome = false}) {
     showDialog(
       context: context,
@@ -185,7 +183,7 @@ class _PageTambahMenuAdminState extends State<PageTambahMenuAdmin> {
                 Navigator.of(context).pop(); // Close the dialog
                 if (navigateToHome) {
                   // Only navigate to the home page if specified
-                  Navigator.of(context).pushReplacementNamed('/home_admin');
+                  Navigator.of(context).pop();
                 }
               },
             ),
