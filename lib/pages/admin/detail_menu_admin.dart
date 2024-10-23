@@ -15,12 +15,83 @@ class DetailMenuAdmin extends StatefulWidget {
 
 class _DetailMenuAdminState extends State<DetailMenuAdmin> {
   late Future<List<Menu>> _getMenu;
+  final MenuService _menuService = MenuService();
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
     // Call fetchUsersByRole to get the players here
     _getMenu = MenuService().getMenu();
+  }
+
+  void _onDeleteMenu(String menuId) async {
+    // Tampilkan dialog konfirmasi sebelum menghapus
+    bool? confirmDelete = await showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Delete Menu'),
+          content: Text('Are you sure you want to delete this menu?'),
+          actions: [
+            TextButton(
+              child: Text('Cancel'),
+              onPressed: () {
+                Navigator.of(context).pop(false); // Batalkan penghapusan
+              },
+            ),
+            TextButton(
+              child: Text('Delete'),
+              onPressed: () {
+                Navigator.of(context).pop(true); // Konfirmasi penghapusan
+              },
+            ),
+          ],
+        );
+      },
+    );
+
+    // Jika konfirmasi penghapusan diterima
+    if (confirmDelete == true) {
+      try {
+        await _menuService.deleteMenuById(menuId);
+        print('Menu deleted successfully');
+
+        // Tampilkan feedback setelah sukses menghapus menu
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Menu deleted successfully'),
+          ),
+        );
+
+        // Tampilkan AlertDialog untuk konfirmasi sukses
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: Text('Success'),
+              content: Text('Menu deleted successfully.'),
+              actions: [
+                TextButton(
+                  child: Text('OK'),
+                  onPressed: () {
+                    Navigator.of(context).pop(); // Tutup dialog
+                    Navigator.of(context).pop();
+                  },
+                ),
+              ],
+            );
+          },
+        );
+      } catch (e) {
+        print('Failed to delete menu: $e');
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Failed to delete menu: $e'),
+          ),
+        );
+      }
+    }
   }
 
   @override
@@ -82,7 +153,17 @@ class _DetailMenuAdminState extends State<DetailMenuAdmin> {
                     DataMenuTop(
                       textLeading: 'Data menu',
                       textAction: 'Edit',
-                      route: '',
+                      onTap: () {
+                        Navigator.of(context)
+                            .pushNamed('/update_menu', arguments: {
+                          'namaMenu': namaMenu,
+                          'jenis': jenisMenu,
+                          'harga': hargaMenu,
+                          'img': imgMenu,
+                          'id': idMenu,
+                          'deskripsi': deskripsiMenu,
+                        });
+                      },
                     ),
                     Container(
                       width: double.infinity,
@@ -123,6 +204,40 @@ class _DetailMenuAdminState extends State<DetailMenuAdmin> {
                             ),
                             SizedBox(height: 5),
                           ],
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: MediaQuery.of(context).size.height * 0.04),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 25),
+                      child: GestureDetector(
+                        onTap: () {
+                          _onDeleteMenu(idMenu);
+                        },
+                        child: Container(
+                          height: MediaQuery.of(context).size.width * 0.14,
+                          decoration: BoxDecoration(
+                            color: Color.fromRGBO(203, 24, 28, 1),
+                            borderRadius: BorderRadius.circular(12),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.grey,
+                                offset: Offset(1, 1),
+                                blurRadius: 2,
+                              ),
+                            ],
+                          ),
+                          child: Center(
+                            child: Text(
+                              "Delete",
+                              style: GoogleFonts.poppins(
+                                fontSize:
+                                    MediaQuery.of(context).size.width * 0.04,
+                                fontWeight: FontWeight.w600,
+                                color: Colors.white,
+                              ),
+                            ),
+                          ),
                         ),
                       ),
                     ),
