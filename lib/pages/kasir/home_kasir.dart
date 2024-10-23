@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import '../../components/kasir/transaction_card.dart';
 import '../../models/transaction.dart';
 import '../../services/auth_service.dart';
+import '../../services/user_service.dart';
 
 class HomeKasirPage extends StatefulWidget {
   const HomeKasirPage({super.key});
@@ -16,14 +17,41 @@ class _HomeKasirPageState extends State<HomeKasirPage>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
 
+  String userName = '';
+  String userRole = '';
+  String userUid = '';
+  String userEmail = '';
+
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 2, vsync: this);
+    _tabController = TabController(
+      length: 2,
+      vsync: this,
+    );
+    _getUserDetails();
   }
 
   void _handleLogout() {
     AuthService().logout(context);
+  }
+
+  Future<void> _getUserDetails() async {
+    final userService = UserService();
+    final userIdentity = await userService.getUserByUid();
+
+    if (userIdentity != null) {
+      setState(() {
+        userName = userIdentity['name'] ?? 'No Name';
+        userRole = userIdentity['role'] ?? 'No Role';
+        userEmail = userIdentity['email'] ?? 'No Email';
+        userUid = userIdentity['uid'] ?? 'No uid';
+      });
+      print(
+          'User Details: Name: $userName, Role: $userRole, Email: $userEmail, UID: $userUid'); // Debugging statement
+    } else {
+      print('No user details found'); // Debugging statement
+    }
   }
 
   @override
@@ -33,7 +61,7 @@ class _HomeKasirPageState extends State<HomeKasirPage>
       appBar: AppBar(
         backgroundColor: Colors.white,
         title: Text(
-          'Data Transaksi - Kasir',
+          'Data Transaksi ',
           style: GoogleFonts.poppins(
             fontSize: MediaQuery.of(context).size.width * 0.035,
             fontWeight: FontWeight.w600,
