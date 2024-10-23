@@ -2,26 +2,27 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 class Meja {
   final String idMeja;
-  final String nomorMeja;
-  final String status; // 'available' or 'occupied'
+  final int nomorMeja;
+  final bool status; // Change status to bool
 
-  Meja(
-      {required this.idMeja,
-      required this.nomorMeja,
-      this.status = 'available'});
+  Meja({
+    required this.idMeja,
+    required this.nomorMeja,
+    required this.status,
+  });
 
   factory Meja.fromFirestore(DocumentSnapshot doc) {
     return Meja(
       idMeja: doc['id_meja'],
-      nomorMeja: doc['nomor_meja'],
-      status: doc['status'] ?? 'available',
+      nomorMeja: doc['nomer_meja'],
+      status: doc['status'] ?? true, // Status is now a boolean
     );
   }
 
-  Map<String, dynamic> toFirestore() {
+  Map<String, dynamic> toMap() {
     return {
-      'id_meja': idMeja,
-      'nomor_meja': nomorMeja,
+      'id_meja' : idMeja,
+      'nomer_meja': nomorMeja,
       'status': status,
     };
   }
