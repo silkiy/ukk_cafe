@@ -34,7 +34,7 @@ class _MenuCardState extends State<MenuCard> {
             color: Colors.white,
             boxShadow: [
               BoxShadow(
-                color: Colors.grey,
+                color: Colors.grey.shade600,
                 offset: Offset(1, 1),
                 blurRadius: 2,
               ),
