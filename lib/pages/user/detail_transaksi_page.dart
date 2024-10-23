@@ -4,7 +4,9 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import '../../controllers/cart_notifier.dart';
 import '../../models/cart_item.dart';
+import '../../models/meja.dart';
 import '../../models/transaction.dart';
+import '../../services/meja_service.dart';
 import '../../services/transaksi_service.dart';
 
 class DetailTransaksiPage extends StatefulWidget {
@@ -15,7 +17,17 @@ class DetailTransaksiPage extends StatefulWidget {
 }
 
 class _DetailTransaksiPageState extends State<DetailTransaksiPage> {
+  final MejaService _mejaService = MejaService();
+  late Future<List<Meja>> _mejaFuture;
+  Meja? selectedMeja;
+
   bool _isLoading = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _mejaFuture = _mejaService.getMeja();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -26,7 +38,7 @@ class _DetailTransaksiPageState extends State<DetailTransaksiPage> {
       return Scaffold(
         backgroundColor: Color.fromRGBO(243, 244, 248, 1),
         appBar: AppBar(
-          title: Text('Detail Transaksi'),
+          title: Text('Checkout Page'),
           backgroundColor: Colors.white,
         ),
         body: Center(
@@ -54,6 +66,15 @@ class _DetailTransaksiPageState extends State<DetailTransaksiPage> {
       ),
       body: Column(
         children: [
+          SizedBox(height: 10),
+          Text(
+            'Detail Pesanan',
+            style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          SizedBox(height: 15),
           Expanded(
             child: SizedBox(
               child: ListView.builder(
@@ -106,6 +127,104 @@ class _DetailTransaksiPageState extends State<DetailTransaksiPage> {
               ),
             ),
           ),
+          SizedBox(height: 15),
+          Text(
+            'Pilih Meja',
+            style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          SizedBox(height: 15),
+          Expanded(
+            child: FutureBuilder<List<Meja>>(
+              future: MejaService().getMeja(),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return Center(
+                    child: CircularProgressIndicator(),
+                  );
+                }
+
+                if (snapshot.hasError) {
+                  return Center(
+                    child: Text('Error: ${snapshot.error}'),
+                  );
+                }
+
+                if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                  return Center(
+                    child: Text('Tidak ada meja yang tersedia'),
+                  );
+                }
+
+                List<Meja> mejaList = snapshot.data!;
+                mejaList.sort(
+                  (a, b) => a.nomorMeja.compareTo(b.nomorMeja),
+                );
+
+                return GridView.builder(
+                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 7, // 7 kolom
+                    childAspectRatio: 1.0, // Rasio aspek simetris
+                  ),
+                  itemCount: mejaList.length,
+                  itemBuilder: (context, index) {
+                    final meja = mejaList[index];
+                    Color containerColor = meja.status
+                        ? Colors.green.shade300 // Tersedia
+                        : Colors.red.shade300; // Tidak tersedia
+
+                    return GestureDetector(
+                      onTap: () {
+                        if (meja.status) {
+                          setState(() {
+                            selectedMeja = meja; // Simpan meja yang dipilih
+                          });
+                        } else {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text('Meja ini tidak tersedia.'),
+                            ),
+                          );
+                        }
+                      },
+                      child: Container(
+                        height: MediaQuery.of(context).size.width * 0.2,
+                        width: MediaQuery.of(context).size.width * 0.15,
+                        margin: EdgeInsets.all(10.0),
+                        decoration: BoxDecoration(
+                          color: selectedMeja == meja
+                              ? Colors.blue // Sorot meja yang dipilih
+                              : containerColor, // Gunakan warna status
+                          borderRadius: BorderRadius.circular(8),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.grey.withOpacity(0.3),
+                              offset: Offset(0, 2),
+                              blurRadius: 4,
+                            ),
+                          ],
+                        ),
+                        child: Center(
+                          child: Text(
+                            meja.nomorMeja.toString(),
+                            style: TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.bold,
+                              color: selectedMeja == meja
+                                  ? Colors.white
+                                  : Colors.black,
+                            ),
+                          ),
+                        ),
+                      ),
+                    );
+                  },
+                );
+              },
+            ),
+          ),
           Padding(
             padding: const EdgeInsets.all(16.0),
             child: Column(
@@ -114,7 +233,7 @@ class _DetailTransaksiPageState extends State<DetailTransaksiPage> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      'Total Harga:',
+                      'Total Harga',
                       style: TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
@@ -122,6 +241,28 @@ class _DetailTransaksiPageState extends State<DetailTransaksiPage> {
                     ),
                     Text(
                       'Rp $totalHarga',
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                ),
+                SizedBox(height: 10),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      'Meja yang di pilih',
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    Text(
+                      selectedMeja != null
+                          ? "Meja  ${selectedMeja!.nomorMeja}"
+                          : 'Belum memilih meja',
                       style: TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
@@ -151,17 +292,26 @@ class _DetailTransaksiPageState extends State<DetailTransaksiPage> {
                           return;
                         }
 
+                        if (selectedMeja == null) {
+                          // Jika meja belum dipilih, tampilkan pesan kesalahan
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content:
+                                  Text('Silakan pilih meja terlebih dahulu'),
+                            ),
+                          );
+                          return; // Hentikan eksekusi lebih lanjut
+                        }
+
                         // Contoh data transaksi
                         Transaksi transaksi = Transaksi(
-                          idTransaksi: DateTime.now()
-                              .millisecondsSinceEpoch
-                              .toString(), // Convert to String
+                          idTransaksi:
+                              DateTime.now().millisecondsSinceEpoch.toString(),
                           tglTransaksi: Timestamp.now(),
-                          idUser: '', // Kosongkan atau ganti sesuai kebutuhan
-                          idMeja: 'meja 1', // Ganti dengan ID meja yang sesuai
-                          namaPelanggan:
-                              'Pelanggan 1', // Ganti dengan nama pelanggan
-                          status: 'belum bayar', // Atur status sesuai kebutuhan
+                          idUser: '',
+                          idMeja: selectedMeja!.idMeja,
+                          namaPelanggan: 'Pelanggan 1',
+                          status: 'belum bayar',
                         );
 
                         // Tampilkan loading indicator
@@ -174,6 +324,11 @@ class _DetailTransaksiPageState extends State<DetailTransaksiPage> {
                           context,
                           transaksi,
                           cartItems,
+                        );
+
+                        await MejaService().updateMejaStatus(
+                          selectedMeja!.idMeja,
+                          false,
                         );
 
                         // Tutup loading indicator
@@ -215,7 +370,7 @@ class _DetailTransaksiPageState extends State<DetailTransaksiPage> {
                       ),
                     ),
                   ),
-                )
+                ),
               ],
             ),
           ),

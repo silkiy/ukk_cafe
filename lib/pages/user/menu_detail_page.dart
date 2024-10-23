@@ -173,7 +173,7 @@ class _MenuDetailPageState extends State<MenuDetailPage> {
                                         MainAxisAlignment.spaceBetween,
                                     children: [
                                       Text(
-                                        "Rp${widget.menu.harga}",
+                                        "Rp ${widget.menu.harga}",
                                         style: TextStyle(
                                           fontSize: MediaQuery.of(context)
                                                   .size

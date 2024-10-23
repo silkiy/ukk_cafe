@@ -5,6 +5,7 @@ import 'package:ukk_cafe/pages/admin/detail_menu_admin.dart';
 
 import 'package:ukk_cafe/pages/admin/home_admin.dart';
 import 'package:ukk_cafe/pages/admin/page_data_menu_admin.dart';
+import 'package:ukk_cafe/pages/admin/page_tambah_meja.dart';
 import 'package:ukk_cafe/pages/admin/page_tambah_menu_admin.dart';
 import 'package:ukk_cafe/pages/kasir/home_kasir.dart';
 import 'package:ukk_cafe/pages/manajer/home_manajer.dart';
@@ -55,6 +56,7 @@ class MyApp extends StatelessWidget {
         '/detail_menu_admin': (context) => DetailMenuAdmin(),
         '/tambah_menu_admin': (context) => PageTambahMenuAdmin(),
         '/update_menu': (context) => UpdateMenuPage(),
+        '/tambah_meja_admin': (context) => PageTambahMeja(),
         //kasir
         '/home_kasir': (context) => HomeKasirPage(),
         //manajer
