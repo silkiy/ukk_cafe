@@ -105,7 +105,7 @@ class _LandingPageState extends State<LandingPage>
                     }
                     if (snapshot.hasData && snapshot.data!.isNotEmpty) {
                       return MenuList(
-                          menus: snapshot.data!); // Panggil MenuList
+                          menus: snapshot.data!);
                     }
                     return Center(
                       child: Text('Tidak ada menu minuman'),

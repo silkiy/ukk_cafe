@@ -14,6 +14,7 @@ import 'package:ukk_cafe/pages/user/menu_detail_page.dart';
 
 import 'controllers/cart_notifier.dart';
 import 'controllers/menu_notifier.dart';
+import 'pages/admin/page_update_menu_admin.dart';
 import 'pages/auth/login_page.dart';
 
 Future<void> main() async {
@@ -53,6 +54,7 @@ class MyApp extends StatelessWidget {
         '/page_data_menu_admin': (context) => PageDataMenuAdmin(),
         '/detail_menu_admin': (context) => DetailMenuAdmin(),
         '/tambah_menu_admin': (context) => PageTambahMenuAdmin(),
+        '/update_menu': (context) => UpdateMenuPage(),
         //kasir
         '/home_kasir': (context) => HomeKasirPage(),
         //manajer
