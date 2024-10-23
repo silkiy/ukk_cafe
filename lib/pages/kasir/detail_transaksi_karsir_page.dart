@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../models/transaction.dart';
 import '../../services/meja_service.dart';
 import '../../services/transaksi_service.dart';
+import '../../services/user_service.dart';
 
 class DetailTransaksiKarsirPage extends StatefulWidget {
   final Transaksi transaksi;
@@ -21,10 +22,16 @@ class _DetailTransaksiKarsirPageState extends State<DetailTransaksiKarsirPage> {
   List<Map<String, dynamic>> _detailTransaksi = [];
   bool _isLoading = false;
 
+  String userName = '';
+  String userRole = '';
+  String userUid = '';
+  String userEmail = '';
+
   @override
   void initState() {
     super.initState();
     _fetchDetailTransaksi();
+    _getUserDetails();
   }
 
   Future<void> _fetchDetailTransaksi() async {
@@ -49,12 +56,33 @@ class _DetailTransaksiKarsirPageState extends State<DetailTransaksiKarsirPage> {
     }
   }
 
+  Future<void> _getUserDetails() async {
+    final userService = UserService();
+    final userIdentity = await userService.getUserByUid();
+
+    if (userIdentity != null) {
+      setState(() {
+        userName = userIdentity['name'] ?? 'No Name';
+        userRole = userIdentity['role'] ?? 'No Role';
+        userEmail = userIdentity['email'] ?? 'No Email';
+        userUid = userIdentity['uid'] ?? 'No uid';
+      });
+      print(
+        'User Details: Name: $userName, Role: $userRole, Email: $userEmail, UID: $userUid',
+      ); // Debugging statement
+    } else {
+      print('No user details found'); // Debugging statement
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Color.fromRGBO(243, 244, 248, 1),
       appBar: AppBar(
-        title: Text('Detail Transaksi'),
+        title: Text(
+          'Detail Transaksi $userName',
+        ),
         backgroundColor: Colors.white,
       ),
       body: StreamBuilder<DocumentSnapshot>(
@@ -72,172 +100,187 @@ class _DetailTransaksiKarsirPageState extends State<DetailTransaksiKarsirPage> {
           }
 
           final transaksiData = snapshot.data!.data() as Map<String, dynamic>;
-          final transaksi = Transaksi.fromMap(transaksiData, snapshot.data!.id);
+          final transaksi = Transaksi.fromMap(
+            transaksiData,
+            snapshot.data!.id,
+          );
 
-          return SingleChildScrollView(
-            child: Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // Transaction Details Card
-                  Card(
-                    elevation: 4,
-                    margin: EdgeInsets.symmetric(vertical: 10),
-                    child: Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'Transaksi ID: ${transaksi.idTransaksi}',
-                            style: TextStyle(
-                                fontSize: 18, fontWeight: FontWeight.bold),
-                          ),
-                          SizedBox(height: 8),
-                          Text(
-                            'Tanggal: ${transaksi.tglTransaksi.toDate()}',
-                            style: TextStyle(fontSize: 16),
-                          ),
-                          SizedBox(height: 8),
-                          Text(
-                            'Meja: ${transaksi.idMeja}',
-                            style: TextStyle(fontSize: 16),
-                          ),
-                          SizedBox(height: 8),
-                          Text(
-                            'Pelanggan: ${transaksi.namaPelanggan}',
-                            style: TextStyle(fontSize: 16),
-                          ),
-                          SizedBox(height: 8),
-                          Row(
+          return Column(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              SingleChildScrollView(
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // Transaction Details Card
+                      Card(
+                        elevation: 4,
+                        margin: EdgeInsets.symmetric(vertical: 10),
+                        child: Padding(
+                          padding: const EdgeInsets.all(16.0),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                'Status: ',
-                                style: TextStyle(fontSize: 16),
-                              ),
-                              Text(
-                                "${transaksi.status}",
+                                'Transaksi ID: ${transaksi.idTransaksi}',
                                 style: TextStyle(
-                                  fontSize: 16,
-                                  color: transaksi.status == 'sudah di bayar'
-                                      ? Colors.green
-                                      : Colors.red,
+                                  fontSize: 18,
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
+                              SizedBox(height: 8),
+                              Text(
+                                'Tanggal: ${transaksi.tglTransaksi.toDate()}',
+                                style: TextStyle(fontSize: 16),
+                              ),
+                              SizedBox(height: 8),
+                              Text(
+                                'Meja: ${transaksi.idMeja}',
+                                style: TextStyle(fontSize: 16),
+                              ),
+                              SizedBox(height: 8),
+                              Text(
+                                'Pelanggan: ${transaksi.namaPelanggan}',
+                                style: TextStyle(fontSize: 16),
+                              ),
+                              SizedBox(height: 8),
+                              Row(
+                                children: [
+                                  Text(
+                                    'Status: ',
+                                    style: TextStyle(fontSize: 16),
+                                  ),
+                                  Text(
+                                    "${transaksi.status}",
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      color:
+                                          transaksi.status == 'sudah di bayar'
+                                              ? Colors.green
+                                              : Colors.red,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ],
+                              ),
                             ],
+                          ),
+                        ),
+                      ),
+
+                      // Items List Card
+                      Card(
+                        elevation: 4,
+                        margin: EdgeInsets.symmetric(vertical: 10),
+                        child: Padding(
+                          padding: const EdgeInsets.all(16.0),
+                          child: Column(
+                            children: _detailTransaksi.map((detail) {
+                              List items = detail['items'] ?? [];
+                              if (items.isEmpty) {
+                                return ListTile(
+                                  title: Text('No items available'),
+                                );
+                              }
+
+                              return Column(
+                                children: items.map<Widget>((item) {
+                                  final String name = item['name'] ?? 'Unknown';
+                                  final int quantity = item['quantity'] ?? 0;
+                                  final double harga = item['harga'] != null
+                                      ? item['harga'].toDouble()
+                                      : 0.0;
+
+                                  return ListTile(
+                                    title: Text(name),
+                                    subtitle: Text('$quantity x Rp $harga'),
+                                    trailing: Text(
+                                        'Subtotal: Rp ${quantity * harga}'),
+                                  );
+                                }).toList(),
+                              );
+                            }).toList(),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Center(
+                  child: GestureDetector(
+                    onTap: () async {
+                      setState(() {
+                        _isLoading = true; // Start loading
+                      });
+
+                      try {
+                        await TransaksiService.updateStatusTransaksi(
+                          context,
+                          widget.transaksi.idTransaksi,
+                          userName,
+                        );
+
+                        await MejaService.updateStatusMeja(
+                          widget.transaksi.idMeja,
+                          true,
+                        );
+
+                        _fetchDetailTransaksi();
+                      } catch (e) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text('Error: $e'),
+                          ),
+                        );
+                      } finally {
+                        setState(() {
+                          _isLoading = false; // Stop loading
+                        });
+                      }
+                    },
+                    child: Container(
+                      height: MediaQuery.of(context).size.width * 0.14,
+                      width: MediaQuery.of(context).size.width * 0.8,
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.all(
+                          Radius.circular(12),
+                        ),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.grey,
+                            offset: Offset(1, 1),
+                            blurRadius: 2,
                           ),
                         ],
                       ),
-                    ),
-                  ),
-
-                  // Items List Card
-                  Card(
-                    elevation: 4,
-                    margin: EdgeInsets.symmetric(vertical: 10),
-                    child: Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: Column(
-                        children: _detailTransaksi.map((detail) {
-                          List items = detail['items'] ?? [];
-                          if (items.isEmpty) {
-                            return ListTile(
-                              title: Text('No items available'),
-                            );
-                          }
-
-                          return Column(
-                            children: items.map<Widget>((item) {
-                              final String name = item['name'] ?? 'Unknown';
-                              final int quantity = item['quantity'] ?? 0;
-                              final double harga = item['harga'] != null
-                                  ? item['harga'].toDouble()
-                                  : 0.0;
-
-                              return ListTile(
-                                title: Text(name),
-                                subtitle: Text('$quantity x Rp $harga'),
-                                trailing:
-                                    Text('Subtotal: Rp ${quantity * harga}'),
-                              );
-                            }).toList(),
-                          );
-                        }).toList(),
+                      child: Center(
+                        child: _isLoading
+                            ? CircularProgressIndicator
+                                .adaptive() // Tampilkan loading
+                            : Text(
+                                "Tandai sebagai Sudah di Bayar\nCetak nota",
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                  fontSize:
+                                      MediaQuery.of(context).size.width * 0.04,
+                                  fontWeight: FontWeight.w500,
+                                  color: Colors.black,
+                                ),
+                              ),
                       ),
                     ),
                   ),
-                ],
+                ),
               ),
-            ),
+            ],
           );
         },
-      ),
-      bottomNavigationBar: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            ElevatedButton.icon(
-              onPressed: () {
-                TransaksiService.cetakNota(
-                  context,
-                  widget.transaksi,
-                );
-              },
-              icon: Icon(Icons.print),
-              label: Text('Cetak Nota'),
-              style: ElevatedButton.styleFrom(
-                padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(30),
-                ),
-              ),
-            ),
-            SizedBox(height: 10),
-            ElevatedButton.icon(
-              onPressed: () async {
-                setState(() {
-                  _isLoading = true; // Start loading
-                });
-
-                try {
-                  await TransaksiService.updateStatusTransaksi(
-                    context,
-                    widget.transaksi.idTransaksi,
-                  );
-
-                  await MejaService.updateStatusMeja(
-                    widget.transaksi.idMeja,
-                    true,
-                  );
-
-                  _fetchDetailTransaksi();
-                } catch (e) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text('Error: $e'),
-                    ),
-                  );
-                } finally {
-                  setState(() {
-                    _isLoading = false; // Stop loading
-                  });
-                }
-              },
-              icon:
-                  _isLoading ? CircularProgressIndicator() : Icon(Icons.check),
-              label: Text('Tandai sebagai Sudah di Bayar'),
-              style: ElevatedButton.styleFrom(
-                padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(30),
-                ),
-              ),
-            ),
-          ],
-        ),
       ),
     );
   }
