@@ -151,8 +151,8 @@ class _HomeAdminPageState extends State<HomeAdminPage> {
                     ),
                     SizedBox(height: 20),
                     AddContainerAdmin(
-                      route: '/jadwal_admin',
-                      jenis: "Tambah Meja",
+                      route: '/tambah_meja_admin',
+                      jenis: "Tambah meja",
                       icon: Icons.table_restaurant_rounded,
                     ),
                   ],
