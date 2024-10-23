@@ -121,7 +121,7 @@ class _MenuCardState extends State<MenuCard> {
                     Row(
                       children: [
                         Text(
-                          "Rp",
+                          "Rp ",
                           style: TextStyle(
                             fontSize: MediaQuery.of(context).size.width * 0.04,
                             color: Colors.black,
