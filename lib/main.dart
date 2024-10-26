@@ -5,8 +5,10 @@ import 'package:ukk_cafe/pages/admin/detail_menu_admin.dart';
 
 import 'package:ukk_cafe/pages/admin/home_admin.dart';
 import 'package:ukk_cafe/pages/admin/page_data_menu_admin.dart';
+import 'package:ukk_cafe/pages/admin/page_data_user_admin.dart';
 import 'package:ukk_cafe/pages/admin/page_tambah_meja.dart';
 import 'package:ukk_cafe/pages/admin/page_tambah_menu_admin.dart';
+import 'package:ukk_cafe/pages/admin/page_tambah_user.dart';
 import 'package:ukk_cafe/pages/kasir/home_kasir.dart';
 import 'package:ukk_cafe/pages/manajer/home_manajer.dart';
 import 'package:ukk_cafe/pages/user/detail_transaksi_page.dart';
@@ -15,6 +17,7 @@ import 'package:ukk_cafe/pages/user/menu_detail_page.dart';
 
 import 'controllers/cart_notifier.dart';
 import 'controllers/menu_notifier.dart';
+import 'pages/admin/detail_user_admin.dart';
 import 'pages/admin/page_update_menu_admin.dart';
 import 'pages/auth/login_page.dart';
 
@@ -57,6 +60,9 @@ class MyApp extends StatelessWidget {
         '/tambah_menu_admin': (context) => PageTambahMenuAdmin(),
         '/update_menu': (context) => UpdateMenuPage(),
         '/tambah_meja_admin': (context) => PageTambahMeja(),
+        '/page_data_user_admin': (context) => PageDataUserAdmin(),
+        '/detail_user_admin': (context) => DetailUserAdmin(),
+        '/tambah_user_admin': (context) => CreateUserPage(),
         //kasir
         '/home_kasir': (context) => HomeKasirPage(),
         //manajer
