@@ -104,8 +104,7 @@ class _LandingPageState extends State<LandingPage>
                       );
                     }
                     if (snapshot.hasData && snapshot.data!.isNotEmpty) {
-                      return MenuList(
-                          menus: snapshot.data!);
+                      return MenuList(menus: snapshot.data!);
                     }
                     return Center(
                       child: Text('Tidak ada menu minuman'),
@@ -117,10 +116,12 @@ class _LandingPageState extends State<LandingPage>
           ),
         ],
       ),
-      
       floatingActionButton: FloatingActionButton(
-        onPressed: () async{
-          Navigator.pushNamed(context, '/detail_transaksi');
+        onPressed: () async {
+          Navigator.pushNamed(
+            context,
+            '/detail_transaksi',
+          );
         },
         backgroundColor: Colors.white,
         child: Icon(Icons.shopping_bag_outlined),
