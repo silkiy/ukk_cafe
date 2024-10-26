@@ -33,6 +33,7 @@ class _HomeAdminPageState extends State<HomeAdminPage> {
   }
 
   @override
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Color.fromRGBO(243, 244, 248, 1),
@@ -58,107 +59,105 @@ class _HomeAdminPageState extends State<HomeAdminPage> {
           ),
         ],
       ),
-      body: Expanded(
-        child: SingleChildScrollView(
-          child: Padding(
-            padding: EdgeInsets.all(20),
-            child: FutureBuilder<Map<String, int>>(
-              future: _getDashboardCounts(),
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return Center(
-                    child: CircularProgressIndicator(),
-                  ); // Loading state
-                } else if (snapshot.hasError) {
-                  return Center(
-                    child: Text('Error: ${snapshot.error}'),
-                  ); // Error state
-                } else if (!snapshot.hasData) {
-                  return Center(
-                    child: Text('Tidak ada data yang tersedia'),
-                  );
-                }
-
-                final int totalUser = snapshot.data!['totalUser']!;
-                final int totalMenu = snapshot.data!['totalMenu']!;
-                return Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    Text(
-                      "Total User dan menu",
-                      style: GoogleFonts.poppins(
-                        fontSize: MediaQuery.of(context).size.width * 0.04,
-                        fontWeight: FontWeight.w600,
-                        color: Colors.black,
-                      ),
-                    ),
-                    SizedBox(height: 20),
-                    Row(
-                      children: [
-                        InformationContainer(
-                          route: '/page_data_menu_admin',
-                          icon: Icons.food_bank,
-                          jumlah: totalMenu.toString(),
-                          jenis: "Total Menu",
-                        ),
-                        Expanded(
-                          child: Container(),
-                        ),
-                        InformationContainer(
-                          route: '',
-                          icon: Icons.person,
-                          jumlah: totalUser.toString(),
-                          jenis: "Total User",
-                        ),
-                      ],
-                    ),
-                    SizedBox(height: 20),
-                    Text(
-                      "Tambah user dan menu",
-                      style: GoogleFonts.poppins(
-                        fontSize: MediaQuery.of(context).size.width * 0.04,
-                        fontWeight: FontWeight.w600,
-                        color: Colors.black,
-                      ),
-                    ),
-                    SizedBox(height: 20),
-                    Row(
-                      children: [
-                        AddContainerAdmin(
-                          route: '/tambah_pemain',
-                          jenis: "Tambah User",
-                          icon: Icons.add,
-                        ),
-                        Expanded(
-                          child: Container(),
-                        ),
-                        AddContainerAdmin(
-                          route: '/tambah_menu_admin',
-                          jenis: "Tambah Menu",
-                          icon: Icons.add,
-                        ),
-                      ],
-                    ),
-                    SizedBox(height: 20),
-                    Text(
-                      "Tambah meja",
-                      style: GoogleFonts.poppins(
-                        fontSize: MediaQuery.of(context).size.width * 0.04,
-                        fontWeight: FontWeight.w600,
-                        color: Colors.black,
-                      ),
-                    ),
-                    SizedBox(height: 20),
-                    AddContainerAdmin(
-                      route: '/tambah_meja_admin',
-                      jenis: "Tambah meja",
-                      icon: Icons.table_restaurant_rounded,
-                    ),
-                  ],
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: EdgeInsets.all(20),
+          child: FutureBuilder<Map<String, int>>(
+            future: _getDashboardCounts(),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return Center(
+                  child: CircularProgressIndicator(),
+                ); // Loading state
+              } else if (snapshot.hasError) {
+                return Center(
+                  child: Text('Error: ${snapshot.error}'),
+                ); // Error state
+              } else if (!snapshot.hasData) {
+                return Center(
+                  child: Text('Tidak ada data yang tersedia'),
                 );
-              },
-            ),
+              }
+
+              final int totalUser = snapshot.data!['totalUser']!;
+              final int totalMenu = snapshot.data!['totalMenu']!;
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  Text(
+                    "Total User dan menu",
+                    style: GoogleFonts.poppins(
+                      fontSize: MediaQuery.of(context).size.width * 0.04,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.black,
+                    ),
+                  ),
+                  SizedBox(height: 20),
+                  Row(
+                    children: [
+                      InformationContainer(
+                        route: '/page_data_menu_admin',
+                        icon: Icons.food_bank,
+                        jumlah: totalMenu.toString(),
+                        jenis: "Total Menu",
+                      ),
+                      Expanded(
+                        child: Container(),
+                      ),
+                      InformationContainer(
+                        route: '/page_data_user_admin',
+                        icon: Icons.person,
+                        jumlah: totalUser.toString(),
+                        jenis: "Total User",
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 20),
+                  Text(
+                    "Tambah user dan menu",
+                    style: GoogleFonts.poppins(
+                      fontSize: MediaQuery.of(context).size.width * 0.04,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.black,
+                    ),
+                  ),
+                  SizedBox(height: 20),
+                  Row(
+                    children: [
+                      AddContainerAdmin(
+                        route: '/tambah_user_admin',
+                        jenis: "Tambah User",
+                        icon: Icons.add,
+                      ),
+                      Expanded(
+                        child: Container(),
+                      ),
+                      AddContainerAdmin(
+                        route: '/tambah_menu_admin',
+                        jenis: "Tambah Menu",
+                        icon: Icons.add,
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 20),
+                  Text(
+                    "Tambah meja",
+                    style: GoogleFonts.poppins(
+                      fontSize: MediaQuery.of(context).size.width * 0.04,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.black,
+                    ),
+                  ),
+                  SizedBox(height: 20),
+                  AddContainerAdmin(
+                    route: '/tambah_meja_admin',
+                    jenis: "Tambah meja",
+                    icon: Icons.table_restaurant_rounded,
+                  ),
+                ],
+              );
+            },
           ),
         ),
       ),
