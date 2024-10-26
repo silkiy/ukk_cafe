@@ -9,7 +9,7 @@ class InformasiMenuAdmin extends StatelessWidget {
   final String img;
   final String deskripsi;
 
-  InformasiMenuAdmin({
+  const InformasiMenuAdmin({
     super.key,
     required this.harga,
     required this.id,
@@ -21,82 +21,77 @@ class InformasiMenuAdmin extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.only(
-        top: 10,
-        right: 10,
-        left: 10,
+    return Card(
+      elevation: 4,
+      margin: const EdgeInsets.symmetric(vertical: 10),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(10),
       ),
-      child: Row(
-        children: [
-          Expanded(
-            flex: 3,
-            child: Text(
-              namaMenu,
-              style: GoogleFonts.poppins(
-                fontSize: MediaQuery.of(context).size.width * 0.03,
-                fontWeight: FontWeight.w600,
-                color: Colors.black,
-              ),
-            ),
-          ),
-          SizedBox(width: 10),
-          Expanded(
-            flex: 4,
-            child: Text(
-              jenis,
-              style: GoogleFonts.poppins(
-                fontSize: MediaQuery.of(context).size.width * 0.03,
-                fontWeight: FontWeight.w600,
-                color: Colors.black,
-              ),
-            ),
-          ),
-          Expanded(
-            flex: 2,
-            child: InkWell(
-              onTap: () {
-                Navigator.pushNamed(
-                  context,
-                  '/detail_menu_admin',
-                  arguments: {
-                    'namaMenu': namaMenu,
-                    'jenis': jenis,
-                    'id': id, // Pass uid
-                    'img': img, // Pass profileImg
-                    'harga': harga, // Pass profileImg
-                    'deskripsi': deskripsi, // Ensure this is included
-                  },
-                );
-              },
-              child: Padding(
-                padding: EdgeInsets.all(5),
-                child: Container(
-                  decoration: BoxDecoration(
-                    border: Border.all(
-                      color: Color.fromRGBO(203, 24, 28, 1),
-                    ),
-                    borderRadius: BorderRadius.circular(5),
-                    color: Colors.white,
-                  ),
-                  child: Padding(
-                    padding: EdgeInsets.all(5),
-                    child: Center(
-                      child: Text(
-                        "Details",
-                        style: GoogleFonts.poppins(
-                          fontSize: MediaQuery.of(context).size.width * 0.03,
-                          fontWeight: FontWeight.w600,
-                          color: Color.fromRGBO(203, 24, 28, 1),
-                        ),
-                      ),
-                    ),
-                  ),
+      child: Padding(
+        padding: const EdgeInsets.all(15),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Expanded(
+              flex: 3,
+              child: Text(
+                namaMenu,
+                style: GoogleFonts.poppins(
+                  fontSize: MediaQuery.of(context).size.width * 0.03,
+                  fontWeight: FontWeight.w600,
+                  color: Colors.black,
                 ),
               ),
             ),
-          ),
-        ],
+            const SizedBox(width: 10),
+            Expanded(
+              flex: 4,
+              child: Text(
+                jenis,
+                style: GoogleFonts.poppins(
+                  fontSize: MediaQuery.of(context).size.width * 0.03,
+                  fontWeight: FontWeight.w600,
+                  color: Colors.black,
+                ),
+              ),
+            ),
+            const SizedBox(width: 10),
+            Expanded(
+              flex: 2,
+              child: ElevatedButton(
+                onPressed: () {
+                  Navigator.pushNamed(
+                    context,
+                    '/detail_menu_admin',
+                    arguments: {
+                      'namaMenu': namaMenu,
+                      'jenis': jenis,
+                      'id': id,
+                      'img': img,
+                      'harga': harga,
+                      'deskripsi': deskripsi,
+                    },
+                  );
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color.fromRGBO(203, 24, 28, 1),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(5),
+                  ),
+                  padding: EdgeInsets.symmetric(vertical: 10),
+                ),
+                child: Text(
+                  "Details",
+                  style: GoogleFonts.poppins(
+                    fontSize: MediaQuery.of(context).size.width * 0.03,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.white,
+                  ),
+                ),
+              ),
+            )
+          ],
+        ),
       ),
     );
   }
