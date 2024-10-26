@@ -18,6 +18,7 @@ class DetailTransaksiPage extends StatefulWidget {
 
 class _DetailTransaksiPageState extends State<DetailTransaksiPage> {
   final MejaService _mejaService = MejaService();
+  final _nameController = TextEditingController();
   late Future<List<Meja>> _mejaFuture;
   Meja? selectedMeja;
 
@@ -131,7 +132,7 @@ class _DetailTransaksiPageState extends State<DetailTransaksiPage> {
           Text(
             'Pilih Meja',
             style: TextStyle(
-              fontSize: 18,
+              fontSize: MediaQuery.of(context).size.width * 0.04,
               fontWeight: FontWeight.bold,
             ),
           ),
@@ -225,6 +226,45 @@ class _DetailTransaksiPageState extends State<DetailTransaksiPage> {
               },
             ),
           ),
+          SizedBox(height: 15),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 15),
+            child: Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(10),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.grey.shade400,
+                    offset: Offset(0.4, 0.4),
+                    blurRadius: 0.2,
+                  ),
+                ],
+              ),
+              child: TextField(
+                controller: _nameController,
+                decoration: InputDecoration(
+                  enabledBorder: OutlineInputBorder(
+                    borderSide: BorderSide(
+                      color: Color.fromRGBO(210, 210, 210, 1),
+                    ),
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.blueAccent),
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  hintText: "Masukan Nama Anda",
+                  hintStyle: GoogleFonts.poppins(
+                    fontSize: MediaQuery.of(context).size.width * 0.03,
+                    fontWeight: FontWeight.w400,
+                    color: Color.fromRGBO(154, 154, 154, 1),
+                  ),
+                  fillColor: Colors.white,
+                  filled: true,
+                ),
+              ),
+            ),
+          ),
           Padding(
             padding: const EdgeInsets.all(16.0),
             child: Column(
@@ -242,8 +282,8 @@ class _DetailTransaksiPageState extends State<DetailTransaksiPage> {
                     Text(
                       'Rp $totalHarga',
                       style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
+                        fontSize: MediaQuery.of(context).size.width * 0.04,
+                        fontWeight: FontWeight.w400,
                       ),
                     ),
                   ],
@@ -264,8 +304,8 @@ class _DetailTransaksiPageState extends State<DetailTransaksiPage> {
                           ? "Meja  ${selectedMeja!.nomorMeja}"
                           : 'Belum memilih meja',
                       style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
+                        fontSize: MediaQuery.of(context).size.width * 0.04,
+                        fontWeight: FontWeight.w400,
                       ),
                     ),
                   ],
@@ -281,26 +321,48 @@ class _DetailTransaksiPageState extends State<DetailTransaksiPage> {
                             context.read<CartNotifier>().cartItems;
 
                         // Pastikan cartItems tidak kosong
-                        if (cartItems.isEmpty) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: Text(
-                                'Keranjang kosong!',
-                              ),
-                            ),
+                        if (_nameController.text.isEmpty) {
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return AlertDialog(
+                                title: Text('Anda belum mengisi nama'),
+                                content: Text(
+                                    "Harap isi nama terlebih dahulu sebelum checkout"),
+                                actions: [
+                                  TextButton(
+                                    child: Text('OK'),
+                                    onPressed: () {
+                                      Navigator.of(context).pop();
+                                    },
+                                  ),
+                                ],
+                              );
+                            },
                           );
-                          return;
+                          return; // Hentikan eksekusi lebih lanjut
                         }
 
                         if (selectedMeja == null) {
-                          // Jika meja belum dipilih, tampilkan pesan kesalahan
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content:
-                                  Text('Silakan pilih meja terlebih dahulu'),
-                            ),
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return AlertDialog(
+                                title: Text('Anda belum memilih meja'),
+                                content: Text(
+                                    "Harap memilih meja terlebih dahulu sebelum checkout"),
+                                actions: [
+                                  TextButton(
+                                    child: Text('OK'),
+                                    onPressed: () {
+                                      Navigator.of(context).pop();
+                                    },
+                                  ),
+                                ],
+                              );
+                            },
                           );
-                          return; // Hentikan eksekusi lebih lanjut
+                          return;
                         }
 
                         // Contoh data transaksi
@@ -308,9 +370,9 @@ class _DetailTransaksiPageState extends State<DetailTransaksiPage> {
                           idTransaksi:
                               DateTime.now().millisecondsSinceEpoch.toString(),
                           tglTransaksi: Timestamp.now(),
-                          idUser: '',
+                          idUser: "",
                           idMeja: selectedMeja!.idMeja,
-                          namaPelanggan: 'Pelanggan 1',
+                          namaPelanggan: _nameController.text,
                           status: 'belum bayar',
                         );
 
