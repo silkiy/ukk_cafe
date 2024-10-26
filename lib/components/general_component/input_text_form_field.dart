@@ -40,6 +40,17 @@ class InputFormField extends StatelessWidget {
           ),
           Container(
             height: MediaQuery.of(context).size.height * 0.07,
+            decoration: BoxDecoration(
+              color: Colors.white, // Warna background Container
+              borderRadius: BorderRadius.circular(16),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.grey.shade400,
+                  offset: Offset(0.4, 0.4),
+                  blurRadius: 0.2,
+                ),
+              ],
+            ),
             child: TextFormField(
               // Changed from TextField to TextFormField
               keyboardType: keyboardType,
@@ -58,22 +69,22 @@ class InputFormField extends StatelessWidget {
                 ),
                 hintText: hintText,
                 filled: true,
-                fillColor: Colors.grey.shade200,
+                fillColor: Colors.white,
                 border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(10.0), // Rounded corners
-                  borderSide:
-                      BorderSide(color: Colors.grey.shade500), // Border color
+                  borderRadius: BorderRadius.circular(16),
+                  borderSide: BorderSide.none, // Border color
                 ),
                 enabledBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(10.0),
                   borderSide: BorderSide(
-                    color: Colors.grey.shade500,
+                    color: Colors.grey,
+                    width: 1.0,
                   ), // Default border color
                 ),
                 focusedBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(10.0),
                   borderSide: BorderSide(
-                    color: Colors.grey.shade500,
+                    color: Color.fromRGBO(203, 24, 28, 1),
                     width: 2.0,
                   ), // Border when focused
                 ),
