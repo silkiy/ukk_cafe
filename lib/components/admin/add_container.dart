@@ -30,9 +30,9 @@ class AddContainerAdmin extends StatelessWidget {
           ),
           boxShadow: [
             BoxShadow(
-              color: Colors.grey,
-              offset: Offset(1, 1),
-              blurRadius: 2,
+              color: Colors.grey.shade400,
+              offset: Offset(0.4, 0.4),
+              blurRadius: 0.2,
             ),
           ],
         ),
