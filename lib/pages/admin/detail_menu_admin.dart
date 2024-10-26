@@ -111,15 +111,36 @@ class _DetailMenuAdminState extends State<DetailMenuAdmin> {
     return Scaffold(
       backgroundColor: Color.fromRGBO(243, 244, 248, 1),
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        backgroundColor: Colors.white.withOpacity(0.9), // Make it translucent
         title: Text(
-          "Details menu",
+          "Details Menu",
           style: GoogleFonts.poppins(
-            fontSize: MediaQuery.of(context).size.width * 0.04,
-            fontWeight: FontWeight.w600,
+            fontSize: 20, // Fixed font size for consistency
+            fontWeight: FontWeight.bold,
             color: Colors.black,
           ),
         ),
+        actions: [
+          IconButton(
+            icon: Icon(
+              Icons.edit,
+              color: Colors.black,
+            ), // Edit icon
+            onPressed: () {
+              Navigator.of(context).pushNamed(
+                '/update_menu',
+                arguments: {
+                  'namaMenu': namaMenu,
+                  'jenis': jenisMenu,
+                  'harga': hargaMenu,
+                  'img': imgMenu,
+                  'id': idMenu,
+                  'deskripsi': deskripsiMenu,
+                },
+              );
+            },
+          ),
+        ],
       ),
       body: FutureBuilder<List<Menu>>(
         future: _getMenu,
@@ -134,7 +155,7 @@ class _DetailMenuAdminState extends State<DetailMenuAdmin> {
             );
           } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
             return Center(
-              child: Text('Tidak ada meu yang ditemukan'),
+              child: Text('Tidak ada menu yang ditemukan'),
             );
           }
 
@@ -218,7 +239,7 @@ class _DetailMenuAdminState extends State<DetailMenuAdmin> {
                           height: MediaQuery.of(context).size.width * 0.14,
                           decoration: BoxDecoration(
                             color: Color.fromRGBO(203, 24, 28, 1),
-                            borderRadius: BorderRadius.circular(12),
+                            borderRadius: BorderRadius.circular(16),
                             boxShadow: [
                               BoxShadow(
                                 color: Colors.grey,
