@@ -105,7 +105,9 @@ class _HomeKasirPageState extends State<HomeKasirPage>
               }
 
               final transactions = snapshot.data!.docs
-                  .map((doc) => Transaksi.fromFirestore(doc))
+                  .map(
+                    (doc) => Transaksi.fromFirestore(doc),
+                  )
                   .toList();
 
               if (transactions.isEmpty) {
