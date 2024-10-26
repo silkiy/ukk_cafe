@@ -84,8 +84,6 @@ class _ReceiptDialogState extends State<ReceiptDialog> {
     );
 
     if (shouldPrint == true) {
-      // Call your print function here
-      // For example: printNota(widget.transaksi);
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('Nota berhasil dicetak!'),
@@ -99,38 +97,55 @@ class _ReceiptDialogState extends State<ReceiptDialog> {
     return AlertDialog(
       title: Text('Nota Transaksi'),
       content: isLoading
-          ? Center(child: CircularProgressIndicator())
+          ? Center(
+              child: CircularProgressIndicator(),
+            )
           : SingleChildScrollView(
               child: ListBody(
                 children: [
-                  Text('Transaksi ID: ${widget.transaksi.idTransaksi}'),
-                  Text('Nama Kasir: ${widget.transaksi.idUser}'),
-                  Text('Tanggal: ${widget.transaksi.tglTransaksi.toDate()}'),
-                  Text('Meja: ${widget.transaksi.idMeja}'),
-                  Text('Pelanggan: ${widget.transaksi.namaPelanggan}'),
+                  Text(
+                    'Transaksi ID: ${widget.transaksi.idTransaksi}',
+                  ),
+                  Text(
+                    'Nama Kasir: ${widget.transaksi.idUser}',
+                  ),
+                  Text(
+                    'Tanggal: ${widget.transaksi.tglTransaksi.toDate()}',
+                  ),
+                  Text(
+                    'Meja: ${widget.transaksi.idMeja}',
+                  ),
+                  Text(
+                    'Pelanggan: ${widget.transaksi.namaPelanggan}',
+                  ),
                   SizedBox(height: 10),
                   Text('Detail Item:',
-                      style: TextStyle(fontWeight: FontWeight.bold)),
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                      )),
                   ...items.map((item) {
                     return Text(
-                        '${item['name']} x ${item['quantity']} = Rp ${item['harga'] * item['quantity']}');
+                      '${item['name']} x ${item['quantity']} = Rp ${item['harga'] * item['quantity']}',
+                    );
                   }).toList(),
                   SizedBox(height: 10),
-                  Text('Total: Rp ${total.toStringAsFixed(2)}',
-                      style: TextStyle(fontWeight: FontWeight.bold)),
+                  Text(
+                    'Total: Rp ${total.toStringAsFixed(2)}',
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
                 ],
               ),
             ),
       actions: [
         TextButton(
           onPressed: () {
-            Navigator.of(context).pop(); // Tutup dialog
+            Navigator.of(context).pop();
           },
           child: Text('Tutup'),
         ),
         TextButton(
           onPressed: () {
-            _confirmPrint(context); // Tampilkan dialog konfirmasi cetak
+            _confirmPrint(context);
           },
           child: Text('Print'),
         ),
