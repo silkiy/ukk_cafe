@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import '../../components/manager/date_picker_manager.dart';
 import '../../services/auth_service.dart';
 
 class HomeManajerPage extends StatefulWidget {
@@ -87,15 +88,17 @@ class _HomeManajerPageState extends State<HomeManajerPage> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                _buildDatePicker(
+                buildDatePicker(
+                  context: context,
                   label: 'Tanggal Mulai',
                   date: _startDate,
-                  isStartDate: true,
+                  onSelectDate: () => _selectDate(context, true),
                 ),
-                _buildDatePicker(
-                  label: 'Tanggal Akhir',
+                buildDatePicker(
+                  context: context,
+                  label: 'Tanggal Selesai',
                   date: _endDate,
-                  isStartDate: false,
+                  onSelectDate: () => _selectDate(context, false),
                 ),
               ],
             ),
@@ -165,44 +168,4 @@ class _HomeManajerPageState extends State<HomeManajerPage> {
     );
   }
 
-  Widget _buildDatePicker({
-    required String label,
-    required DateTime? date,
-    required bool isStartDate,
-  }) {
-    return Expanded(
-      child: Column(
-        children: [
-          Text(
-            label,
-            style: GoogleFonts.poppins(
-              fontWeight: FontWeight.w600,
-            ),
-          ),
-          SizedBox(height: 8),
-          ElevatedButton(
-            onPressed: () => _selectDate(
-              context,
-              isStartDate,
-            ),
-            style: ElevatedButton.styleFrom(
-              padding: EdgeInsets.symmetric(vertical: 12),
-              backgroundColor: Colors.blueAccent,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(8),
-              ),
-            ),
-            child: Padding(
-              padding: const EdgeInsets.symmetric(
-                  horizontal: 16.0), // Add horizontal padding
-              child: Text(
-                date == null ? 'Pilih Tanggal' : date.toString().split(' ')[0],
-                style: GoogleFonts.poppins(color: Colors.white),
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
 }
