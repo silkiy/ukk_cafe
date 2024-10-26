@@ -126,10 +126,13 @@ class _MenuDetailPageState extends State<MenuDetailPage> {
                                     style: TextStyle(
                                       fontSize:
                                           MediaQuery.of(context).size.width *
-                                              0.09,
+                                              0.07,
                                       color: Colors.black,
                                       fontWeight: FontWeight.bold,
                                     ),
+                                  ),
+                                  SizedBox(
+                                    height: 10,
                                   ),
                                   Row(
                                     children: [
