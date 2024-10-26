@@ -50,7 +50,7 @@ class _MenuCardState extends State<MenuCard> {
                 child: Padding(
                   padding: EdgeInsets.all(12.0),
                   child: ClipRRect(
-                    borderRadius: BorderRadius.circular(12),
+                    borderRadius: BorderRadius.circular(16),
                     child: Image.network(
                       widget.img,
                       fit: BoxFit.cover,
