@@ -43,17 +43,34 @@ class _PageTambahMenuAdminState extends State<PageTambahMenuAdmin> {
     Reference ref =
         FirebaseStorage.instance.ref().child('menu').child(fileName);
 
-    // Mengunggah gambar
-    UploadTask uploadTask = ref.putData(
-      await image.readAsBytes(),
+    // Tampilkan loading dialog
+    showDialog(
+      context: context,
+      barrierDismissible:
+          false, // Mencegah dialog ditutup dengan menyentuh di luar
+      builder: (BuildContext context) {
+        return Center(child: CircularProgressIndicator());
+      },
     );
 
-    TaskSnapshot snapshot = await uploadTask;
-    if (snapshot.state == TaskState.success) {
-      String downloadUrl = await snapshot.ref.getDownloadURL();
-      return downloadUrl;
-    } else {
-      throw Exception('Failed to upload image');
+    try {
+      // Mengunggah gambar
+      UploadTask uploadTask = ref.putData(
+        await image.readAsBytes(),
+      );
+
+      TaskSnapshot snapshot = await uploadTask;
+      if (snapshot.state == TaskState.success) {
+        String downloadUrl = await snapshot.ref.getDownloadURL();
+        Navigator.of(context).pop(); // Tutup loading dialog
+        return downloadUrl;
+      } else {
+        Navigator.of(context).pop(); // Tutup loading dialog
+        throw Exception('Failed to upload image');
+      }
+    } catch (e) {
+      Navigator.of(context).pop(); // Tutup loading dialog jika terjadi error
+      throw Exception('Failed to upload image: $e');
     }
   }
 
@@ -74,6 +91,16 @@ class _PageTambahMenuAdminState extends State<PageTambahMenuAdmin> {
   Future<void> _uploadImage() async {
     if (_image != null) {
       try {
+        // Tampilkan loading dialog
+        showDialog(
+          context: context,
+          barrierDismissible:
+              false, // Mencegah dialog ditutup dengan menyentuh di luar
+          builder: (BuildContext context) {
+            return Center(child: CircularProgressIndicator());
+          },
+        );
+
         String uploadUrl = await _uploadMenuImage(
           XFile(_image!.path),
         );
@@ -82,11 +109,16 @@ class _PageTambahMenuAdminState extends State<PageTambahMenuAdmin> {
         });
         print("Image uploaded successfully: $_imageUrl");
 
-        // Show success dialog
+        // Tutup loading dialog
+        Navigator.of(context).pop(); // Tutup loading dialog
+
+        // Tampilkan dialog sukses
         _showSuccessDialog('Image uploaded successfully');
       } catch (e) {
+        // Tutup loading dialog
+        Navigator.of(context).pop(); // Tutup loading dialog
         print("Failed to upload image: $e");
-        // Optionally show an error dialog
+        // Tampilkan pesan error
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text("Failed to upload image: $e"),
@@ -127,6 +159,15 @@ class _PageTambahMenuAdminState extends State<PageTambahMenuAdmin> {
       _formKey.currentState!.save();
 
       try {
+        // Tampilkan loading dialog
+        showDialog(
+          context: context,
+          barrierDismissible: false,
+          builder: (BuildContext context) {
+            return Center(child: CircularProgressIndicator());
+          },
+        );
+
         // Log ketika proses penambahan menu dimulai
         print('Adding menu to Firebase...');
 
@@ -140,23 +181,38 @@ class _PageTambahMenuAdminState extends State<PageTambahMenuAdmin> {
           deskripsi: _deskripsiMenu!,
         );
 
+        // Tutup loading dialog
+        Navigator.of(context).pop(); // Tutup loading dialog
+
         // Log keberhasilan
         print('Menu added successfully!');
 
+        // Reset form dan gambar
+        setState(() {
+          _namaMenu = '';
+          _jenisMenu = '';
+          _hargaMenu = '';
+          _deskripsiMenu = '';
+          _imageUrl = '';
+          _image = null; // Kosongkan gambar
+          _isImagePicked = false; // Reset status gambar
+        });
+
         _formKey.currentState!.reset();
 
-        // Show success dialog
+        // Tampilkan dialog sukses
         _showSuccessDialog(
           'Menu added successfully!',
           navigateToHome: true,
         );
-
-        // Reset the form after successful submission
       } catch (e) {
+        // Tutup loading dialog
+        Navigator.of(context).pop(); // Tutup loading dialog
+
         // Log error jika ada masalah saat menambahkan menu
         print('Failed to add menu: $e');
 
-        // Show error message
+        // Tampilkan pesan error
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('Failed to add menu: $e'),
@@ -164,11 +220,12 @@ class _PageTambahMenuAdminState extends State<PageTambahMenuAdmin> {
         );
       }
     } else {
-      // Log jika form tidak valid
       print('Form is not valid!');
     }
   }
 
+
+// Dialog untuk menampilkan keberhasilan
   void _showSuccessDialog(String message, {bool navigateToHome = false}) {
     showDialog(
       context: context,
@@ -178,14 +235,14 @@ class _PageTambahMenuAdminState extends State<PageTambahMenuAdmin> {
           content: Text(message),
           actions: <Widget>[
             TextButton(
-              child: Text('OK'),
               onPressed: () {
-                Navigator.of(context).pop(); // Close the dialog
+                Navigator.of(context).pop(); // Tutup dialog
                 if (navigateToHome) {
-                  // Only navigate to the home page if specified
-                  Navigator.of(context).pop();
+                  // Arahkan ke halaman utama atau halaman lain
+                  Navigator.of(context).pushReplacementNamed('/home');
                 }
               },
+              child: Text('OK'),
             ),
           ],
         );
