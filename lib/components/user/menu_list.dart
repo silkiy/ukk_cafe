@@ -21,7 +21,10 @@ class MenuList extends StatelessWidget {
         childAspectRatio: 0.75,
       ),
       itemCount: menus.length, // Jumlah item dalam grid
-      itemBuilder: (context, index) {
+      itemBuilder: (
+        context,
+        index,
+      ) {
         final menu = menus[index];
         return GestureDetector(
           onTap: () {
