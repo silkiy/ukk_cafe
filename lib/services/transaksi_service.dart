@@ -52,14 +52,29 @@ class TransaksiService {
       context.read<CartNotifier>().clearCart();
 
       // Tampilkan pesan sukses
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Transaksi berhasil ditambahkan!'),
-        ),
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text('Pesana berhasil di prosses'),
+            content: Text(
+              "Silahkan menuju meja yang telah anda pilih",
+            ),
+            actions: [
+              TextButton(
+                child: Text('OK'),
+                onPressed: () {
+                  Navigator.pop(context);
+                  Navigator.of(context).pushNamedAndRemoveUntil(
+                    '/landing_page',
+                    (Route<dynamic> route) => false,
+                  );
+                },
+              ),
+            ],
+          );
+        },
       );
-
-      // Arahkan kembali ke halaman utama jika perlu
-      Navigator.pop(context);
     } catch (error) {
       // Tangani kesalahan
       ScaffoldMessenger.of(context).showSnackBar(
@@ -227,5 +242,4 @@ class TransaksiService {
       );
     }
   }
-
 }
