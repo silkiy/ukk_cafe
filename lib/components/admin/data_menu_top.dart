@@ -17,35 +17,42 @@ class DataMenuTop extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(10),
-          topRight: Radius.circular(10),
+        borderRadius: BorderRadius.vertical(
+          top: Radius.circular(10),
         ),
         color: Color.fromRGBO(203, 24, 28, 1),
       ),
       child: Padding(
-        padding: EdgeInsets.all(10),
+        padding: EdgeInsets.all(15),
         child: Row(
           children: [
             Text(
               textLeading,
               style: GoogleFonts.poppins(
                 fontSize: MediaQuery.of(context).size.width * 0.035,
-                fontWeight: FontWeight.w600,
-                color: Color.fromRGBO(243, 244, 248, 1),
+                fontWeight: FontWeight.bold,
+                color: Colors.white,
               ),
             ),
-            Expanded(
-              child: Container(),
-            ),
+            Spacer(),
             TextButton(
-              onPressed: onTap, // Memanggil onTap
+              onPressed: onTap,
+              style: TextButton.styleFrom(
+                backgroundColor: Colors.white,
+                padding: EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 8,
+                ),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(5),
+                ),
+              ),
               child: Text(
                 textAction,
                 style: GoogleFonts.poppins(
-                  fontSize: MediaQuery.of(context).size.width * 0.035,
-                  fontWeight: FontWeight.w600,
-                  color: Color.fromRGBO(243, 244, 248, 1),
+                  fontSize: MediaQuery.of(context).size.width * 0.03,
+                  fontWeight: FontWeight.bold,
+                  color: Color.fromRGBO(203, 24, 28, 1),
                 ),
               ),
             ),
