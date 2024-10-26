@@ -7,12 +7,18 @@ import '../../pages/kasir/detail_transaksi_karsir_page.dart';
 class TransactionCard extends StatelessWidget {
   final Transaksi transaction;
 
-  const TransactionCard({super.key, required this.transaction});
+  const TransactionCard({
+    super.key,
+    required this.transaction,
+  });
 
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+      padding: EdgeInsets.symmetric(
+        horizontal: 20,
+        vertical: 10,
+      ),
       child: Center(
         child: GestureDetector(
           onTap: () async {
@@ -95,4 +101,3 @@ class TransactionCard extends StatelessWidget {
     );
   }
 }
-
