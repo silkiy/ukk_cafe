@@ -12,29 +12,37 @@ class UpdateMenuPage extends StatefulWidget {
 
 class _UpdateMenuPageState extends State<UpdateMenuPage> {
   final MenuService _menuService = MenuService();
-
   final TextEditingController _namaController = TextEditingController();
   final TextEditingController _hargaController = TextEditingController();
   final TextEditingController _deskripsiController = TextEditingController();
   String? _jenisMenu;
   String? _idMenu;
 
+  bool isDataLoaded = false; // Menyimpan status pemuatan data pertama kali
+
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
 
-    final args =
-        ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
-    _idMenu = args['id'] ?? 'Unknown ID';
-    _namaController.text = args['namaMenu'] ?? '';
-    _jenisMenu = args['jenis'] ?? '';
-    _hargaController.text = args['harga'] ?? '';
-    _deskripsiController.text = args['deskripsi'] ?? '';
+    if (!isDataLoaded) {
+      // Cek jika data belum dimuat
+      final args =
+          ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
+      _idMenu = args['id'] ?? 'Unknown ID';
+
+      // Set nilai awal satu kali saja
+      _namaController.text = args['namaMenu'] ?? '';
+      _jenisMenu = args['jenis'] ?? '';
+      _hargaController.text = args['harga'] ?? '';
+      _deskripsiController.text = args['deskripsi'] ?? '';
+
+      isDataLoaded = true;
+    }
   }
 
   void _onJenisMenuSelected(String jenis) {
     setState(() {
-      _jenisMenu = jenis; 
+      _jenisMenu = jenis;
     });
   }
 
@@ -43,19 +51,15 @@ class _UpdateMenuPageState extends State<UpdateMenuPage> {
       await _menuService.updateMenuById(
         id: _idMenu!,
         nama: _namaController.text,
-        jenis: _jenisMenu ?? '', 
+        jenis: _jenisMenu ?? '',
         hargaMenu: _hargaController.text,
         deskripsi: _deskripsiController.text,
       );
 
-      // Menampilkan SnackBar untuk umpan balik
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Menu updated successfully'),
-        ),
+        SnackBar(content: Text('Menu updated successfully')),
       );
 
-      // Menampilkan AlertDialog untuk konfirmasi sukses
       showDialog(
         context: context,
         builder: (BuildContext context) {
@@ -66,8 +70,8 @@ class _UpdateMenuPageState extends State<UpdateMenuPage> {
               TextButton(
                 child: Text('OK'),
                 onPressed: () {
-                  Navigator.of(context).pop(); 
-                  Navigator.of(context).pop(); 
+                  Navigator.of(context).pop();
+                  Navigator.of(context).pop();
                 },
               ),
             ],
@@ -77,7 +81,6 @@ class _UpdateMenuPageState extends State<UpdateMenuPage> {
     } catch (e) {
       print('Failed to update menu: $e');
 
-      // Menampilkan AlertDialog jika terjadi kesalahan
       showDialog(
         context: context,
         builder: (BuildContext context) {
@@ -88,7 +91,7 @@ class _UpdateMenuPageState extends State<UpdateMenuPage> {
               TextButton(
                 child: Text('OK'),
                 onPressed: () {
-                  Navigator.of(context).pop(); // Menutup dialog
+                  Navigator.of(context).pop();
                 },
               ),
             ],
@@ -96,11 +99,8 @@ class _UpdateMenuPageState extends State<UpdateMenuPage> {
         },
       );
 
-      // Menampilkan SnackBar untuk umpan balik kesalahan
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Failed to update menu: $e'),
-        ),
+        SnackBar(content: Text('Failed to update menu: $e')),
       );
     }
   }
@@ -108,6 +108,7 @@ class _UpdateMenuPageState extends State<UpdateMenuPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Color.fromRGBO(243, 244, 248, 1),
       appBar: AppBar(
         title: Text(
           'Update Menu',
@@ -131,7 +132,7 @@ class _UpdateMenuPageState extends State<UpdateMenuPage> {
               TextField(
                 controller: _hargaController,
                 decoration: InputDecoration(labelText: 'Harga Menu'),
-                keyboardType: TextInputType.number, // Untuk input harga
+                keyboardType: TextInputType.number,
               ),
               SizedBox(height: 16),
               TextField(
@@ -142,14 +143,12 @@ class _UpdateMenuPageState extends State<UpdateMenuPage> {
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 25),
                 child: GestureDetector(
-                  onTap: () {
-                    _updateMenu();
-                  },
+                  onTap: _updateMenu,
                   child: Container(
                     height: MediaQuery.of(context).size.width * 0.14,
                     decoration: BoxDecoration(
                       color: Color.fromRGBO(203, 24, 28, 1),
-                      borderRadius: BorderRadius.circular(12),
+                      borderRadius: BorderRadius.circular(16),
                       boxShadow: [
                         BoxShadow(
                           color: Colors.grey,
