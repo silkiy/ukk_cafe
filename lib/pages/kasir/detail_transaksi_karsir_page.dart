@@ -5,6 +5,9 @@ import '../../services/meja_service.dart';
 import '../../services/transaksi_service.dart';
 import '../../services/user_service.dart';
 
+import 'package:pdf/widgets.dart' as pw;
+import 'package:printing/printing.dart';
+
 class DetailTransaksiKarsirPage extends StatefulWidget {
   final Transaksi transaksi;
 
@@ -74,6 +77,7 @@ class _DetailTransaksiKarsirPageState extends State<DetailTransaksiKarsirPage> {
       print('No user details found'); // Debugging statement
     }
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -215,31 +219,24 @@ class _DetailTransaksiKarsirPageState extends State<DetailTransaksiKarsirPage> {
                   child: GestureDetector(
                     onTap: () async {
                       setState(() {
-                        _isLoading = true; // Start loading
+                        _isLoading = true;
                       });
 
                       try {
                         await TransaksiService.updateStatusTransaksi(
-                          context,
-                          widget.transaksi.idTransaksi,
-                          userName,
-                        );
-
+                            context, widget.transaksi.idTransaksi, userName);
                         await MejaService.updateStatusMeja(
-                          widget.transaksi.idMeja,
-                          true,
-                        );
-
+                            widget.transaksi.idMeja, true);
                         _fetchDetailTransaksi();
+
+                        // Panggil fungsi untuk generate PDF
                       } catch (e) {
                         ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text('Error: $e'),
-                          ),
+                          SnackBar(content: Text('Error: $e')),
                         );
                       } finally {
                         setState(() {
-                          _isLoading = false; // Stop loading
+                          _isLoading = false;
                         });
                       }
                     },

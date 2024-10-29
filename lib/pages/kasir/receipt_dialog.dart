@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:pdf/pdf.dart';
+import 'package:pdf/widgets.dart' as pw;
+import 'package:printing/printing.dart';
 import '../../models/transaction.dart';
 
 class ReceiptDialog extends StatefulWidget {
@@ -27,7 +30,6 @@ class _ReceiptDialogState extends State<ReceiptDialog> {
 
   Future<void> fetchDetailTransaksi() async {
     try {
-      // Mengambil detail transaksi dari Firestore
       QuerySnapshot snapshot = await FirebaseFirestore.instance
           .collection('detail_transaksi')
           .where('id_transaksi', isEqualTo: widget.transaksi.idTransaksi)
@@ -40,56 +42,75 @@ class _ReceiptDialogState extends State<ReceiptDialog> {
         for (var item in itemsList) {
           final harga = item['harga'] ?? 0.0;
           final quantity = item['quantity'] ?? 0;
-
-          items.add(item); // Menyimpan item
-          total += harga * quantity; // Hitung total
+          items.add(item);
+          total += harga * quantity;
         }
       }
 
       setState(() {
-        isLoading = false; // Set loading menjadi false
+        isLoading = false;
       });
     } catch (e) {
-      // Tangani kesalahan
       print('Gagal mengambil detail transaksi: $e');
       setState(() {
-        isLoading = false; // Set loading menjadi false meski terjadi kesalahan
+        isLoading = false;
       });
     }
   }
 
-  Future<void> _confirmPrint(BuildContext context) async {
-    final shouldPrint = await showDialog<bool>(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          title: Text('Konfirmasi Cetak Nota'),
-          content: Text('Apakah Anda ingin mencetak nota transaksi ini?'),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop(true); // Return true
-              },
-              child: Text('Ya'),
-            ),
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop(false); // Return false
-              },
-              child: Text('Tidak'),
-            ),
-          ],
-        );
-      },
+  Future<void> generatePDF(BuildContext context) async {
+    final pdf = pw.Document();
+
+    pdf.addPage(
+      pw.Page(
+        build: (pw.Context context) {
+          return pw.Column(
+            crossAxisAlignment: pw.CrossAxisAlignment.start,
+            children: [
+              pw.Text(
+                'Nota Transaksi',
+                style: pw.TextStyle(
+                  fontSize: 24,
+                  fontWeight: pw.FontWeight.bold,
+                ),
+              ),
+              pw.SizedBox(height: 20),
+              pw.Text('Transaksi ID: ${widget.transaksi.idTransaksi}'),
+              pw.Text('Nama Kasir: ${widget.transaksi.idUser}'),
+              pw.Text('Tanggal: ${widget.transaksi.tglTransaksi.toDate()}'),
+              pw.Text('Meja: ${widget.transaksi.idMeja}'),
+              pw.Text('Pelanggan: ${widget.transaksi.namaPelanggan}'),
+              pw.SizedBox(height: 20),
+              pw.Text(
+                'Detail Item:',
+                style: pw.TextStyle(
+                  fontSize: 18,
+                  fontWeight: pw.FontWeight.bold,
+                ),
+              ),
+              pw.Column(
+                children: items.map((item) {
+                  final name = item['name'] ?? 'Unknown';
+                  final quantity = item['quantity'] ?? 0;
+                  final harga = item['harga'] ?? 0.0;
+                  return pw.Text(
+                    '$name x $quantity = Rp${(harga * quantity).toStringAsFixed(2)}',
+                  );
+                }).toList(),
+              ),
+              pw.SizedBox(height: 20),
+              pw.Text(
+                'Total: Rp${total.toStringAsFixed(2)}',
+                style: pw.TextStyle(fontWeight: pw.FontWeight.bold),
+              ),
+            ],
+          );
+        },
+      ),
     );
 
-    if (shouldPrint == true) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Nota berhasil dicetak!'),
-        ),
-      );
-    }
+    await Printing.layoutPdf(
+        onLayout: (PdfPageFormat format) async => pdf.save());
   }
 
   @override
@@ -103,26 +124,16 @@ class _ReceiptDialogState extends State<ReceiptDialog> {
           : SingleChildScrollView(
               child: ListBody(
                 children: [
-                  Text(
-                    'Transaksi ID: ${widget.transaksi.idTransaksi}',
-                  ),
-                  Text(
-                    'Nama Kasir: ${widget.transaksi.idUser}',
-                  ),
-                  Text(
-                    'Tanggal: ${widget.transaksi.tglTransaksi.toDate()}',
-                  ),
-                  Text(
-                    'Meja: ${widget.transaksi.idMeja}',
-                  ),
-                  Text(
-                    'Pelanggan: ${widget.transaksi.namaPelanggan}',
-                  ),
+                  Text('Transaksi ID: ${widget.transaksi.idTransaksi}'),
+                  Text('Nama Kasir: ${widget.transaksi.idUser}'),
+                  Text('Tanggal: ${widget.transaksi.tglTransaksi.toDate()}'),
+                  Text('Meja: ${widget.transaksi.idMeja}'),
+                  Text('Pelanggan: ${widget.transaksi.namaPelanggan}'),
                   SizedBox(height: 10),
-                  Text('Detail Item:',
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                      )),
+                  Text(
+                    'Detail Item:',
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
                   ...items.map((item) {
                     return Text(
                       '${item['name']} x ${item['quantity']} = Rp ${item['harga'] * item['quantity']}',
@@ -145,7 +156,7 @@ class _ReceiptDialogState extends State<ReceiptDialog> {
         ),
         TextButton(
           onPressed: () {
-            _confirmPrint(context);
+            generatePDF(context);
           },
           child: Text('Print'),
         ),

@@ -1,3 +1,5 @@
+import 'dart:io' show Platform;
+
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:provider/provider.dart';
@@ -5,6 +7,9 @@ import '../models/cart_item.dart';
 import '../models/transaction.dart';
 import '../controllers/cart_notifier.dart';
 import '../pages/kasir/receipt_dialog.dart';
+
+import 'package:pdf/widgets.dart' as pw;
+import 'package:printing/printing.dart';
 
 class TransaksiService {
   // Fungsi untuk menambahkan transaksi ke Firestore
@@ -210,7 +215,6 @@ class TransaksiService {
         'id_user': userName,
       });
 
-      // Jika update sukses, tampilkan snack bar
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('Status transaksi berhasil diperbarui!'),
@@ -218,16 +222,16 @@ class TransaksiService {
       );
 
       // Ambil transaksi terbaru dari Firestore
-      final transaksi = await FirebaseFirestore.instance
+      final transaksiDoc = await FirebaseFirestore.instance
           .collection('transaksi')
           .doc(idTransaksi)
           .get();
 
-      if (transaksi.exists) {
-        Transaksi transaksiData = Transaksi.fromFirestore(transaksi);
+      if (transaksiDoc.exists) {
+        Transaksi transaksiData = Transaksi.fromFirestore(transaksiDoc);
 
-        // Tampilkan pop-up nota
-        await showDialog(
+        // Tampilkan dialog ReceiptDialog
+        showDialog(
           context: context,
           builder: (context) {
             return ReceiptDialog(transaksi: transaksiData);
