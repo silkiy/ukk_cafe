@@ -9,9 +9,9 @@ class ReceiptDialog extends StatefulWidget {
   final Transaksi transaksi;
 
   const ReceiptDialog({
-    Key? key,
+    super.key,
     required this.transaksi,
-  }) : super(key: key);
+  });
 
   @override
   _ReceiptDialogState createState() => _ReceiptDialogState();
